@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Briefcase, Eye, EyeOff, CheckCircle } from 'lucide-react';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 export default function ResetPasswordPage() {
@@ -37,7 +37,7 @@ export default function ResetPasswordPage() {
     }
     setLoading(true);
     try {
-      await axios.post('/api/auth/reset-password', {
+      await authAPI.resetPassword({
         token,
         new_password: form.new_password,
       });

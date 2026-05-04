@@ -26,7 +26,7 @@ app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
       'http://localhost:5173',
-      'http://localhost:3000',
+      'http://talent-bridge-jobportal.vercel.app',
       process.env.FRONTEND_URL,        // your Vercel URL from .env
     ].filter(Boolean);
 

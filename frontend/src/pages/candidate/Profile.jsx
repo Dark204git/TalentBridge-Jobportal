@@ -83,7 +83,7 @@ const CATEGORIES = [
 
 export default function CandidateProfile() {
   const navigate        = useNavigate();
-  const { logout, user } = useAuth();
+  const { logout, user, updateUser } = useAuth();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting]               = useState(false);
   const [form, setForm] = useState({
@@ -237,6 +237,7 @@ export default function CandidateProfile() {
       await profilesAPI.confirmPictureUpload({ profile_picture_url: publicUrl });
 
       setProfilePicture(publicUrl);
+      updateUser({ profile_picture: publicUrl });
       toast.success('Profile photo updated!');
     } catch (err) {
       console.error(err);

@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  console.error('VITE_API_URL is not set. API calls will fail.');
+}
 
 const api = axios.create({
   baseURL: API_URL,
@@ -34,6 +38,8 @@ export const authAPI = {
   getMe: () => api.get('/auth/me'),
   changePassword:  (data) => api.put('/auth/change-password', data),
   deleteAccount:   ()     => api.delete('/auth/account'),
+  forgotPassword:  (data) => api.post('/auth/forgot-password', data),  // ✅ add
+  resetPassword:   (data) => api.post('/auth/reset-password', data),
 };
 
 // Jobs

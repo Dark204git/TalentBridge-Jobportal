@@ -25,20 +25,23 @@ app.use(helmet());
 
 // CORS — allow local dev + production Vercel frontend
 const allowedOrigins = [
-  'http://localhost:5173',
   'http://localhost:3000',
-  'https://talent-bridge-jobportal.vercel.app',
-];
+  'http://localhost:5173',
+  process.env.FRONTEND_URL, // https://talent-bridge-jobportal.vercel.app
+].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (Postman, Railway health checks)
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // Postman / server-to-server
 
-    if (allowedOrigins.includes(origin)) {
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/talent-bridge-jobportal.*\.vercel\.app$/.test(origin); // ✅ covers all preview URLs
+
+    if (isAllowed) {
       callback(null, true);
     } else {
-      console.warn(`CORS blocked request from: ${origin}`);
+      console.warn(`🚫 CORS blocked: ${origin}`);
       callback(new Error(`CORS blocked: ${origin}`));
     }
   },

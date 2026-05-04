@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Briefcase, ArrowLeft, Mail } from 'lucide-react';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 export default function ForgotPasswordPage() {
@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('/api/auth/forgot-password', { email });
+      await authAPI.forgotPassword({ email });
       setSent(true);
     } catch (err) {
       toast.error(err.response?.data?.error || 'Something went wrong');

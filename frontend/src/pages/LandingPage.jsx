@@ -76,10 +76,10 @@ export default function LandingPage() {
           {/* Search */}
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-10">
             <div
-              className="flex flex-col sm:flex-row gap-2 p-2 rounded-[14px]"
+              className="flex flex-col sm:flex-row gap-0 p-2 rounded-[14px]"
               style={{ background: '#13132a', border: '1px solid rgba(255,255,255,0.12)' }}
             >
-              <div className="flex items-center gap-2.5 flex-1 px-3">
+              <div className="flex items-center gap-2.5 flex-1 px-3 py-3 sm:py-0">
                 <Search size={15} className="text-white/25 flex-shrink-0" />
                 <input
                   value={search}
@@ -88,11 +88,18 @@ export default function LandingPage() {
                   className="flex-1 bg-transparent text-white placeholder-white/25 text-[13px] outline-none font-medium"
                 />
               </div>
+
+              {/* Divider — horizontal on mobile, vertical on desktop */}
+              <div
+                className="block sm:hidden mx-3"
+                style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }}
+              />
               <div
                 className="hidden sm:block w-px my-2"
                 style={{ background: 'rgba(255,255,255,0.08)' }}
               />
-              <div className="flex items-center gap-2.5 px-3 sm:w-44">
+
+              <div className="flex items-center gap-2.5 px-3 py-3 sm:py-0 sm:w-44">
                 <MapPin size={15} className="text-white/25 flex-shrink-0" />
                 <input
                   value={location}
@@ -101,9 +108,12 @@ export default function LandingPage() {
                   className="flex-1 bg-transparent text-white placeholder-white/25 text-[13px] outline-none font-medium"
                 />
               </div>
-              <button type="submit" className="btn-primary rounded-[10px] text-[13px] flex-shrink-0">
-                Search Jobs <ArrowRight size={14} />
-              </button>
+
+              <div className="p-1 pt-0 sm:p-0">
+                <button type="submit" className="btn-primary rounded-[10px] text-[13px] flex-shrink-0 w-full sm:w-auto">
+                  Search Jobs <ArrowRight size={14} />
+                </button>
+              </div>
             </div>
           </form>
 

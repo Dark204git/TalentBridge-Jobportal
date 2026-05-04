@@ -22,18 +22,23 @@ const PORT = process.env.PORT || 5000;
 
 // Security
 app.use(helmet());
+
+// CORS — allow local dev + production Vercel frontend
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://talent-bridge-jobportal.vercel.app',
+];
+
 app.use(cors({
   origin: (origin, callback) => {
-    const allowed = [
-      'http://localhost:5173',
-      'http://talent-bridge-jobportal.vercel.app',
-      process.env.FRONTEND_URL,        // your Vercel URL from .env
-    ].filter(Boolean);
+    // Allow requests with no origin (Postman, Railway health checks)
+    if (!origin) return callback(null, true);
 
-    // Allow requests with no origin (e.g. Postman, Railway health checks)
-    if (!origin || allowed.includes(origin)) {
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked request from: ${origin}`);
       callback(new Error(`CORS blocked: ${origin}`));
     }
   },
@@ -44,18 +49,16 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,          // 15 minutes
-  max: isDev ? 2000 : 500,            // 2000 in dev, 500 in production
+  windowMs: 15 * 60 * 1000,
+  max: isDev ? 2000 : 500,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later' },
-  skip: () => isDev && false,         // remove this line to enforce in dev
 });
-
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: isDev ? 100 : 20,              // 100 in dev, 20 in production
+  max: isDev ? 100 : 20,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many login attempts, please try again in 15 minutes' },
@@ -67,7 +70,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/profiles', profileRoutes);
@@ -92,13 +95,12 @@ app.use((err, req, res, next) => {
 });
 
 // Daily cron — runs every night at midnight
-// 1. Auto-close jobs whose application_deadline has passed
-// 2. Analytics aggregation placeholder
+// Auto-close jobs whose application_deadline has passed
 cron.schedule('0 0 * * *', async () => {
   console.log('⏰ Running daily maintenance...');
 
   try {
-    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+    const today = new Date().toISOString().split('T')[0];
 
     const { data: expiredJobs, error } = await supabase
       .from('jobs')
@@ -120,8 +122,7 @@ cron.schedule('0 0 * * *', async () => {
     console.error('❌ Daily cron failed:', err.message);
   }
 
-  // Analytics aggregation — add logic here if needed
-  console.log('📊 Daily analytics aggregation complete.');
+  console.log('📊 Daily maintenance complete.');
 });
 
 app.listen(PORT, () => {

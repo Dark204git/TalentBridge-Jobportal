@@ -1,9 +1,26 @@
 import { Worker } from 'bullmq';
-import { redis } from '../config/redis.js';
+import dotenv from 'dotenv';
+dotenv.config();
 import { supabase } from '../config/supabase.js';
 import { triggerCandidateMatchOnResume } from '../services/matchingService.js';
 import https from 'https';
 import http from 'http';
+
+
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const isTLS = redisUrl.startsWith('rediss://');
+
+const workerConnection = {
+  url: redisUrl,           // BullMQ accepts a connection config object
+  maxRetriesPerRequest: null,
+  retryStrategy: (times) => Math.min(times * 50, 2000),
+  keepAlive: 30000,
+  connectTimeout: 10000,
+  enableOfflineQueue: true,
+  ...(isTLS && {
+    tls: { rejectUnauthorized: false },
+  }),
+};
 
 // ── Text fetcher ──────────────────────────────────────────────────────────────
 const fetchBuffer = (url) =>
@@ -1033,7 +1050,7 @@ const worker = new Worker(
     }
   },
   {
-    connection: redis,
+    connection: workerConnection,
     concurrency: 2,           // limit parallel jobs — embedding is CPU-heavy
     limiter: { max: 5, duration: 60_000 }, // max 5 per minute
   }

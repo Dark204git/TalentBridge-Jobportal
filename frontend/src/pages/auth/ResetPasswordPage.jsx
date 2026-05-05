@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Briefcase, Eye, EyeOff, CheckCircle } from 'lucide-react';
-import { authAPI } from '../services/api';
+import { authAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 
 export default function ResetPasswordPage() {

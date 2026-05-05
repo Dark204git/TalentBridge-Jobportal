@@ -36,7 +36,7 @@ export default function NotificationBell() {
   return (
     <div className="relative" ref={ref}>
 
-      {/* ── Bell button ── */}
+      //Bell button
       <button
         onClick={() => setOpen((p) => !p)}
         className="relative w-[34px] h-[34px] rounded-[10px] grid place-items-center text-white/40 hover:text-white hover:bg-white/5 transition-colors"
@@ -50,7 +50,7 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* ── Dropdown ── */}
+      //Dropdown
       {open && (
         <div
           className="absolute right-0 mt-2 w-[360px] rounded-[14px] z-[999] shadow-2xl"
@@ -59,7 +59,7 @@ export default function NotificationBell() {
             border: '1px solid rgba(255,255,255,0.10)',
           }}
         >
-          {/* Header */}
+          //Header 
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.07] rounded-t-[14px]">
             <div className="flex items-center gap-2">
               <Bell size={14} className="text-white/50" />
@@ -98,7 +98,7 @@ export default function NotificationBell() {
             </div>
           </div>
 
-          {/* List */}
+          //List 
           <div className="max-h-[400px] overflow-y-auto">
             {loading ? (
               <div className="py-12 text-center">
@@ -122,17 +122,17 @@ export default function NotificationBell() {
                     }`}
                     onClick={() => handleClick(n)}
                   >
-                    {/* Unread dot */}
+                    //Unread dot 
                     {!n.is_read && (
                       <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0" />
                     )}
 
-                    {/* Type icon */}
+                    //Type icon 
                     <div className={`flex-shrink-0 w-8 h-8 rounded-[9px] ${bg} grid place-items-center mt-0.5 ml-2`}>
                       <Icon size={15} className={color} />
                     </div>
 
-                    {/* Text */}
+                    //Text 
                     <div className="flex-1 min-w-0">
                       <p className={`text-[12.5px] font-semibold leading-tight truncate ${n.is_read ? 'text-white/45' : 'text-white'}`}>
                         {n.title}
@@ -145,7 +145,7 @@ export default function NotificationBell() {
                       </p>
                     </div>
 
-                    {/* Delete */}
+                    //Delete 
                     <button
                       onClick={(e) => { e.stopPropagation(); remove(n.id); }}
                       className="flex-shrink-0 opacity-0 group-hover:opacity-100 p-1 rounded-[6px] text-white/20 hover:text-red-400 hover:bg-red-500/10 transition-all mt-0.5"
@@ -158,7 +158,7 @@ export default function NotificationBell() {
             )}
           </div>
 
-          {/* Footer */}
+          //Footer 
           {notifications.length > 0 && (
             <div className="px-4 py-2.5 border-t border-white/[0.07] rounded-b-[14px]">
               <p className="text-[11px] text-white/20 text-center">

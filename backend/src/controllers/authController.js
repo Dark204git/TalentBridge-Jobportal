@@ -220,8 +220,7 @@ export const deleteAccount = async (req, res) => {
     const role   = req.user.role;
 
     // Delete role-specific data first, then the user row.
-    // All related tables use user_id / candidate_id / employer_id as FK,
-    // so we clean them up manually (Supabase anon key doesn't cascade deletes).
+   
     if (role === 'candidate') {
       await Promise.all([
         supabase.from('applications')       .delete().eq('candidate_id', userId),
@@ -249,13 +248,11 @@ export const deleteAccount = async (req, res) => {
     // Delete from your users table
     const { error } = await supabase.from('users').delete().eq('id', userId);
     if (error) throw error;
-
-    // Also delete from Supabase Auth so the email can be re-registered.
-    // Without this, auth.users still holds the email and blocks future signups.
+  
     const { error: authError } = await supabase.auth.admin.deleteUser(userId);
     if (authError) {
-      // Non-fatal: log it but don't fail the request —
-      // the user row is already gone so they can't log in regardless.
+    
+    
       console.warn('Could not delete from Supabase Auth (may not use Supabase Auth):', authError.message);
     }
 

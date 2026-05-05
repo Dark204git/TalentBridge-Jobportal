@@ -6,7 +6,7 @@ import { jobsAPI } from '../../services/api';
 import { formatDistanceToNow, format, differenceInCalendarDays } from 'date-fns';
 import toast from 'react-hot-toast';
 
-// Returns the effective deadline date (midnight deadlines → end of day)
+
 function effectiveDeadline(raw) {
   const d = new Date(raw);
   if (d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0) {
@@ -142,7 +142,7 @@ export default function EmployerJobs() {
                       : 'hover:border-dark-300'
                   }`}
                 >
-                  {/* Expiry alert banner */}
+                  //Expiry alert banner 
                   {expiring && (
                     <div className="flex items-center gap-2 mb-3 pb-3 border-b border-amber-500/20">
                       <AlertTriangle size={13} className="text-amber-400 flex-shrink-0" />
@@ -181,7 +181,7 @@ export default function EmployerJobs() {
                         </span>
                         {job.location && <span className="capitalize">{job.job_type} • {job.location}</span>}
 
-                        {/* Deadline */}
+                        //Deadline 
                         {job.application_deadline && (
                           <span className={`flex items-center gap-1 font-medium ${
                             expiring ? 'text-amber-400' : 'text-slate-400'

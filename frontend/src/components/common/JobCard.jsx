@@ -39,7 +39,7 @@ export default function JobCard({ job, saved, onSave, featured = false }) {
       )}
 
       <div className="flex items-start gap-3 mb-3">
-        {/* Logo */}
+        //Logo 
         <div
           className="w-10 h-10 rounded-[10px] grid place-items-center text-[15px] font-extrabold flex-shrink-0 overflow-hidden"
           style={{
@@ -54,7 +54,7 @@ export default function JobCard({ job, saved, onSave, featured = false }) {
           }
         </div>
 
-        {/* Title & company */}
+        //Title & company 
         <div className="flex-1 min-w-0 pr-16">
           <Link to={`/jobs/${id}`}>
             <h3 className="text-[15px] font-bold text-white leading-tight group-hover:text-gold transition-colors line-clamp-1 tracking-[-0.02em]">
@@ -65,7 +65,7 @@ export default function JobCard({ job, saved, onSave, featured = false }) {
         </div>
       </div>
 
-      {/* Meta row */}
+      //Meta row 
       <div className="flex flex-wrap gap-3 mb-3 text-[11px] text-white/35">
         {location && (
           <span className="flex items-center gap-1"><MapPin size={11} />{location}</span>
@@ -78,7 +78,7 @@ export default function JobCard({ job, saved, onSave, featured = false }) {
         {timeAgo && <span className="flex items-center gap-1"><Clock size={11} />{timeAgo}</span>}
       </div>
 
-      {/* Tags */}
+      //Tags 
       <div className="flex flex-wrap gap-1.5 mb-4">
         {job_type && (
           <span className="badge-gold capitalize">{job_type}</span>
@@ -94,7 +94,7 @@ export default function JobCard({ job, saved, onSave, featured = false }) {
         )}
       </div>
 
-      {/* Footer */}
+      //Footer 
       <div
         className="flex items-center justify-between pt-3"
         style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}

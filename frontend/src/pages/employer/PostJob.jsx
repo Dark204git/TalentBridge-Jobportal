@@ -96,7 +96,7 @@ export default function PostJob() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Info */}
+          //Basic Info 
           <div className="card space-y-5">
             <h2 className="font-semibold text-white text-lg border-b border-dark-400 pb-3">Basic Information</h2>
             <div>
@@ -140,7 +140,7 @@ export default function PostJob() {
             </div>
           </div>
 
-          {/* Salary */}
+          //Salary 
           <div className="card space-y-4">
             <h2 className="font-semibold text-white text-lg border-b border-dark-400 pb-3">Compensation</h2>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -162,7 +162,7 @@ export default function PostJob() {
             </div>
           </div>
 
-          {/* Description */}
+          //Description 
           <div className="card space-y-4">
             <h2 className="font-semibold text-white text-lg border-b border-dark-400 pb-3">Job Details</h2>
             <div>
@@ -179,7 +179,7 @@ export default function PostJob() {
             </div>
           </div>
 
-          {/* Skills */}
+          //Skills 
           <div className="card space-y-4">
             <h2 className="font-semibold text-white text-lg border-b border-dark-400 pb-3">Required Skills</h2>
             <div className="flex gap-2">
@@ -190,7 +190,7 @@ export default function PostJob() {
                 <Plus size={18} />
               </button>
             </div>
-            {/* Common skills */}
+            //Common skills 
             <div className="flex flex-wrap gap-2">
               {COMMON_SKILLS.filter((s) => !form.skills.includes(s)).slice(0, 8).map((s) => (
                 <button key={s} type="button" onClick={() => addSkill(s)}

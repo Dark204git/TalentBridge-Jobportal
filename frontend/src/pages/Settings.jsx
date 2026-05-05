@@ -11,7 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import toast from 'react-hot-toast';
 
-/* ─── Shared inline styles via CSS vars ─────────────────────────────────── */
+// Shared inline styles via CSS vars 
 const card = {
   background: 'var(--settings-card-bg)',
   border: '1px solid var(--settings-card-border)',
@@ -20,7 +20,7 @@ const card = {
   transition: 'background 0.25s, border-color 0.25s',
 };
 
-/* ─── Password Section ──────────────────────────────────────────────────── */
+//Password Section
 function PasswordField({ label, fieldKey, value, show, onToggle, onChange, placeholder }) {
   return (
     <div>
@@ -92,7 +92,7 @@ function PasswordSection() {
 
   return (
     <div style={card}>
-      {/* Header */}
+      //Header 
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
         <div style={{ width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'var(--gold3)', border: '1px solid var(--gold-border)' }}>
           <KeyRound size={16} style={{ color: 'var(--gold)' }} />
@@ -149,7 +149,7 @@ function PasswordSection() {
   );
 }
 
-/* ─── Theme Section ─────────────────────────────────────────────────────── */
+//Theme Section 
 const THEMES = [
   { id: 'dark',   label: 'Dark',   desc: 'Easy on eyes',  icon: Moon,
     swatch: [['#07070f',24,18],['#1a1a35',11,13],['#d4a843',11,8]] },
@@ -174,7 +174,7 @@ function ThemeSection() {
 
   return (
     <div style={card}>
-      {/* Header */}
+      //Header 
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
         <div style={{ width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)' }}>
           <Palette size={16} style={{ color: '#818cf8' }} />
@@ -185,7 +185,7 @@ function ThemeSection() {
         </div>
       </div>
 
-      {/* Mode picker */}
+      //Mode picker 
       <div style={{ marginTop: 20 }}>
         <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--slate2)', marginBottom: 10 }}>
           Color Mode
@@ -202,7 +202,7 @@ function ThemeSection() {
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
                   transition: 'all 0.15s',
                 }}>
-                {/* Swatch preview */}
+                //Swatch preview 
                 <div style={{ display: 'flex', gap: 3, alignItems: 'flex-end' }}>
                   {swatch.map(([color, w, h], i) => (
                     <div key={i} style={{ width: w, height: h, background: color, borderRadius: 3 }} />
@@ -219,7 +219,7 @@ function ThemeSection() {
         </div>
       </div>
 
-      {/* Accent color */}
+      //Accent color 
       <div style={{ marginTop: 20 }}>
         <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--slate2)', marginBottom: 10 }}>
           Accent Color
@@ -250,7 +250,7 @@ function ThemeSection() {
   );
 }
 
-/* ─── Danger Zone ───────────────────────────────────────────────────────── */
+// Danger Zone 
 function DangerSection({ isEmployer }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -274,7 +274,7 @@ function DangerSection({ isEmployer }) {
   return (
     <>
       <div style={{ ...card, background: 'var(--danger-card-bg)', border: '1px solid rgba(239,68,68,0.22)' }}>
-        {/* Header */}
+        //Header 
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
           <div style={{ width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.28)' }}>
             <Shield size={16} style={{ color: '#f87171' }} />
@@ -285,7 +285,7 @@ function DangerSection({ isEmployer }) {
           </div>
         </div>
 
-        {/* Delete row */}
+        //Delete row 
         <div style={{ marginTop: 20, padding: 16, borderRadius: 12, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, background: 'var(--danger-inner-bg)', border: '1px solid rgba(239,68,68,0.18)' }}>
           <div>
             <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--danger-text)', margin: 0 }}>Delete Account</p>
@@ -304,11 +304,11 @@ function DangerSection({ isEmployer }) {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      //Confirmation Modal 
       {showModal && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)' }}>
           <div style={{ width: '100%', maxWidth: 440, borderRadius: 20, padding: 24, background: 'var(--modal-bg)', border: '1px solid rgba(239,68,68,0.30)', boxShadow: '0 24px 60px rgba(0,0,0,0.35)' }}>
-            {/* Icon + title */}
+            //Icon + title 
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
               <div style={{ width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'rgba(239,68,68,0.12)' }}>
                 <AlertTriangle size={20} style={{ color: '#f87171' }} />
@@ -319,13 +319,13 @@ function DangerSection({ isEmployer }) {
               </div>
             </div>
 
-            {/* Body */}
+            //Body 
             <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--modal-body-text)', marginBottom: 18 }}>
               This will permanently delete your {isEmployer ? 'employer account, all job postings, and applications' : 'candidate profile, all applications, and saved jobs'}.{' '}
               <span style={{ color: '#f87171', fontWeight: 600 }}>This cannot be undone.</span>
             </p>
 
-            {/* Confirm input */}
+            //Confirm input 
             <div style={{ marginBottom: 18 }}>
               <label style={{ display: 'block', fontSize: 12, color: 'var(--settings-desc)', marginBottom: 8 }}>
                 Type <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--modal-confirm-text)' }}>DELETE</span> to confirm
@@ -340,7 +340,7 @@ function DangerSection({ isEmployer }) {
                 }} />
             </div>
 
-            {/* Buttons */}
+            //Buttons 
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => { setShowModal(false); setConfirmText(''); }}
                 disabled={deleting}
@@ -370,7 +370,7 @@ function DangerSection({ isEmployer }) {
   );
 }
 
-/* ─── Page ──────────────────────────────────────────────────────────────── */
+
 export default function SettingsPage() {
   const { isEmployer } = useAuth();
   return (

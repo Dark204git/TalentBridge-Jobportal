@@ -82,15 +82,15 @@ export default function JobDetailPage() {
       <Navbar />
 
       <div className="max-w-5xl mx-auto px-4 py-8">
-        {/* Back */}
+        //Back 
         <Link to="/jobs" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6 text-sm">
           <ChevronLeft size={16} /> Back to Jobs
         </Link>
 
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Main Content */}
+          //Main Content 
           <div className="lg:col-span-2 space-y-6">
-            {/* Header */}
+            //Header 
             <div className="card">
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 bg-dark-500 border border-dark-300 rounded-2xl flex items-center justify-center text-2xl font-bold text-brand-400 flex-shrink-0">
@@ -124,13 +124,13 @@ export default function JobDetailPage() {
               </div>
             </div>
 
-            {/* Description */}
+            //Description 
             <div className="card">
               <h2 className="font-display text-xl font-bold text-white mb-4">Job Description</h2>
               <div className="text-slate-300 leading-relaxed whitespace-pre-wrap text-sm">{job.description}</div>
             </div>
 
-            {/* Requirements */}
+            //Requirements 
             {job.requirements && (
               <div className="card">
                 <h2 className="font-display text-xl font-bold text-white mb-4">Requirements</h2>
@@ -138,7 +138,7 @@ export default function JobDetailPage() {
               </div>
             )}
 
-            {/* Skills */}
+            //Skills 
             {job.skills?.length > 0 && (
               <div className="card">
                 <h2 className="font-display text-xl font-bold text-white mb-4">Required Skills</h2>
@@ -153,9 +153,9 @@ export default function JobDetailPage() {
             )}
           </div>
 
-          {/* Sidebar */}
+          //Sidebar 
           <div className="space-y-4">
-            {/* Apply Card */}
+            //Apply Card 
             <div className="card sticky top-24">
               {applied ? (
                 <div className="text-center py-4">
@@ -189,7 +189,7 @@ export default function JobDetailPage() {
               )}
             </div>
 
-            {/* Company Info */}
+            //Company Info 
             {company && (
               <div className="card">
                 <h3 className="font-semibold text-white mb-4">About the Company</h3>
@@ -215,7 +215,7 @@ export default function JobDetailPage() {
         </div>
       </div>
 
-      {/* Apply Modal */}
+      //Apply Modal 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="w-full max-w-lg bg-dark-700 border border-dark-400 rounded-2xl p-6 animate-slide-up">

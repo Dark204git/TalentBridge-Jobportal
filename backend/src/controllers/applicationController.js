@@ -4,7 +4,7 @@ import { sendApplicationReceivedEmail, sendApplicationStatusEmail } from '../ser
 import { notifyApplicationReceived, notifyApplicationStatusChanged } from '../services/notificationService.js';
 import { computeCompositeScore, passesSalaryGate, passesExperienceGate } from '../services/matchingService.js';
 
-// ── Helper: parse pgvector embedding (string or array) ────────────────────────
+//Helper: parse pgvector embedding
 function parseEmbedding(raw) {
   if (!raw) return null;
   if (Array.isArray(raw)) return raw;
@@ -59,7 +59,7 @@ export const applyToJob = async (req, res) => {
       .eq('user_id', req.user.id)
       .maybeSingle();
 
-    // ── Compute match_score at submission time ────────────────────────────
+    //Compute match_score at submission time ──
     let match_score = null;
     const jobEmbedding       = parseEmbedding(job.embedding);
     const candidateEmbedding = parseEmbedding(candidateProfile?.embedding);
@@ -149,7 +149,7 @@ export const getJobApplications = async (req, res) => {
       return res.status(403).json({ error: 'Not authorized' });
     }
 
-    // Fetch applications (no direct FK to candidate_profiles, fetch separately)
+    // Fetch applications 
     const { data: applications, error } = await supabase
       .from('applications')
       .select('*')
@@ -162,7 +162,7 @@ export const getJobApplications = async (req, res) => {
 
     const candidateIds = applications.map(a => a.candidate_id);
 
-    // Fetch candidate users and profiles separately (no direct FK between applications and candidate_profiles)
+    // Fetch candidate users and profiles separately 
     const [{ data: usersData }, { data: profilesData }] = await Promise.all([
       supabase.from('users').select('id, email, full_name').in('id', candidateIds),
       supabase.from('candidate_profiles')
@@ -177,8 +177,7 @@ export const getJobApplications = async (req, res) => {
       ...app,
       users: usersMap[app.candidate_id] || null,
       candidate_profiles: profilesMap[app.candidate_id] || null,
-      // Include job info so the employer can see which job was applied for,
-      // especially important when viewing all applications across all jobs.
+      
       jobs: { id: job.id, title: job.title, location: job.location },
     }));
 
@@ -209,7 +208,7 @@ export const updateApplicationStatus = async (req, res) => {
     if (fetchError) throw fetchError;
     if (!application) return res.status(404).json({ error: 'Application not found' });
 
-    // Fetch candidate user info separately to avoid ambiguous FK issues
+    
     const { data: candidateUser } = await supabase
       .from('users')
       .select('email, full_name')
@@ -242,7 +241,7 @@ export const updateApplicationStatus = async (req, res) => {
   }
 };
 
-// ── Auto-screen: score all pending applications for a job, accept ≥40% ────────
+//Auto-screen: score all pending applications for a job, accept ≥40%
 export const autoScreenApplications = async (req, res) => {
   try {
     const { job_id } = req.params;
@@ -260,7 +259,7 @@ export const autoScreenApplications = async (req, res) => {
 
     const jobEmbedding = parseEmbedding(job.embedding);
 
-    // Fetch only pending applications (don't disturb already-progressed ones)
+    // Fetch only pending applications 
     const { data: apps, error: appsErr } = await supabase
       .from('applications')
       .select('id, candidate_id, match_score, status')
@@ -317,7 +316,7 @@ export const autoScreenApplications = async (req, res) => {
       results.push({ id: app.id, candidate_id: app.candidate_id, score, status: newStatus });
     }
 
-    // Notify candidates of status changes (fire and forget)
+    // Notify candidates of status changes
     for (const r of results) {
       notifyApplicationStatusChanged(r.candidate_id, job.title, r.status).catch(console.error);
     }
@@ -335,7 +334,7 @@ export const autoScreenApplications = async (req, res) => {
   }
 };
 
-// ── Auto-screen ALL jobs for the employer simultaneously ──────────────────────
+//Auto-screen ALL jobs for the employer simultaneously ─
 export const autoScreenAllApplications = async (req, res) => {
   try {
     const THRESHOLD = 40;

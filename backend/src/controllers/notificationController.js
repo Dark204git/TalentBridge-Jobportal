@@ -1,6 +1,6 @@
 import { supabase } from '../config/supabase.js';
 
-/** GET /api/notifications — fetch latest 30 for the current user */
+// GET /api/notifications — fetch latest 30 for the current user 
 export const getNotifications = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -20,7 +20,7 @@ export const getNotifications = async (req, res) => {
   }
 };
 
-/** PATCH /api/notifications/:id/read — mark one as read */
+// PATCH/api/notifications/:id/read — mark one as read 
 export const markAsRead = async (req, res) => {
   try {
     const { id } = req.params;
@@ -38,7 +38,7 @@ export const markAsRead = async (req, res) => {
   }
 };
 
-/** PATCH /api/notifications/read-all — mark all as read */
+// PATCH/api/notifications/read-all — mark all as read 
 export const markAllAsRead = async (req, res) => {
   try {
     const { error } = await supabase
@@ -55,7 +55,7 @@ export const markAllAsRead = async (req, res) => {
   }
 };
 
-/** DELETE /api/notifications/:id — delete one notification */
+// DELETE /api/notifications/:id — delete one notification 
 export const deleteNotification = async (req, res) => {
   try {
     const { id } = req.params;
@@ -73,7 +73,7 @@ export const deleteNotification = async (req, res) => {
   }
 };
 
-/** DELETE /api/notifications — clear all */
+// DELETE /api/notifications — clear all 
 export const clearAll = async (req, res) => {
   try {
     const { error } = await supabase

@@ -40,7 +40,7 @@ export default function CandidateApplications() {
           <p className="text-slate-400 mt-1">{applications.length} total applications</p>
         </div>
 
-        {/* Filter Tabs */}
+        //Filter Tabs 
         <div className="flex gap-2 overflow-x-auto pb-1">
           <button
             onClick={() => setFilter('all')}
@@ -81,7 +81,7 @@ export default function CandidateApplications() {
             {filtered.map((app) => (
               <div key={app.id} className="card hover:border-dark-300 transition-colors">
                 <div className="flex items-start gap-4">
-                  {/* Company Logo */}
+                  //Company Logo 
                   <div className="w-12 h-12 bg-dark-500 border border-dark-300 rounded-xl flex items-center justify-center text-lg font-bold text-brand-400 flex-shrink-0">
                     {app.jobs?.employer_profiles?.company_logo ? (
                       <img src={app.jobs.employer_profiles.company_logo} alt="" className="w-full h-full object-cover rounded-xl" />
@@ -99,7 +99,7 @@ export default function CandidateApplications() {
                       </span>
                     </div>
 
-                    {/* Status Message */}
+                    //Status Message 
                     <div className={`mt-3 px-3 py-2 rounded-lg text-xs ${statusColors[app.status]}`}>
                       {statusLabels[app.status]}
                     </div>
@@ -122,7 +122,7 @@ export default function CandidateApplications() {
 </Link>
                 </div>
 
-                {/* Cover Letter Preview */}
+                //Cover Letter Preview 
                 {app.cover_letter && (
                   <div className="mt-4 pt-4 border-t border-dark-400">
                     <p className="text-xs text-slate-500 mb-1">Cover Letter</p>

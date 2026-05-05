@@ -47,7 +47,7 @@ function SidebarContent({ onClose }) {
     <div className="flex flex-col h-full px-4 py-5"
       style={{ background: 'var(--sidebar-bg)' }}>
 
-      {/* Logo */}
+      //Logo 
       <Link to="/" onClick={onClose}
         className="flex items-center gap-2.5 mb-7">
         <div className="w-[30px] h-[30px] rounded-[7px] grid place-items-center flex-shrink-0"
@@ -60,7 +60,7 @@ function SidebarContent({ onClose }) {
         </span>
       </Link>
 
-      {/* User card */}
+      //User card 
       <div className="flex items-center gap-3 mb-6 p-3 rounded-[12px]"
         style={{
           background: 'var(--sidebar-user-bg)',
@@ -86,7 +86,7 @@ function SidebarContent({ onClose }) {
         </div>
       </div>
 
-      {/* Nav links */}
+      //Nav links 
       <nav className="flex-1 space-y-0.5">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
@@ -109,7 +109,7 @@ function SidebarContent({ onClose }) {
         })}
       </nav>
 
-      {/* Bottom */}
+      //Bottom 
       <div className="pt-4 mt-4"
         style={{ borderTop: '1px solid var(--sidebar-divider)' }}>
         {isEmployer && (
@@ -132,7 +132,6 @@ function SidebarContent({ onClose }) {
   );
 }
 
-// Fix: self-contained logout in SidebarContent
 function SidebarContentWithAuth({ onClose }) {
   const { user, logout, isEmployer } = useAuth();
   const { pathname } = useLocation();
@@ -143,7 +142,7 @@ function SidebarContentWithAuth({ onClose }) {
   return (
     <div className="flex flex-col h-full px-4 py-5">
 
-      {/* Logo */}
+      //Logo 
       <Link to="/" onClick={onClose} className="flex items-center gap-2.5 mb-7">
         <div className="w-[30px] h-[30px] rounded-[7px] grid place-items-center flex-shrink-0"
           style={{ background: 'var(--gold)' }}>
@@ -154,7 +153,7 @@ function SidebarContentWithAuth({ onClose }) {
         </span>
       </Link>
 
-      {/* User card */}
+      //User card 
       <div className="flex items-center gap-3 mb-6 p-3 rounded-[12px]"
         style={{ background: 'var(--sidebar-user-bg)', border: '1px solid var(--sidebar-user-border)' }}>
         <div className="w-9 h-9 rounded-full grid place-items-center flex-shrink-0 overflow-hidden"
@@ -172,7 +171,7 @@ function SidebarContentWithAuth({ onClose }) {
         </div>
       </div>
 
-      {/* Nav */}
+      //Nav 
       <nav className="flex-1 space-y-0.5">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
@@ -195,7 +194,7 @@ function SidebarContentWithAuth({ onClose }) {
         })}
       </nav>
 
-      {/* Bottom */}
+      //Bottom 
       <div className="pt-4 mt-4" style={{ borderTop: '1px solid var(--sidebar-divider)' }}>
         {isEmployer && (
           <Link to="/employer/jobs/new" onClick={onClose}
@@ -226,7 +225,7 @@ export default function DashboardLayout({ children, title }) {
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--ink2)' }}>
 
-      {/* ── Desktop Sidebar ── */}
+      //Desktop Sidebar
       <aside className="hidden lg:flex flex-col w-60 flex-shrink-0 h-full overflow-y-auto"
         style={{
           background: 'var(--sidebar-bg)',
@@ -235,7 +234,7 @@ export default function DashboardLayout({ children, title }) {
         <SidebarContentWithAuth onClose={() => {}} />
       </aside>
 
-      {/* ── Mobile Sidebar ── */}
+      //Mobile Sidebar
       {sidebarOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
@@ -256,17 +255,17 @@ export default function DashboardLayout({ children, title }) {
         </div>
       )}
 
-      {/* ── Main Column ── */}
+      //Main Column
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
-        {/* Topbar */}
+        //Topbar 
         <header className="flex-shrink-0 h-14 flex items-center justify-between px-5 sm:px-7"
           style={{
             background: 'var(--topbar-bg)',
             borderBottom: '1px solid var(--topbar-border)',
           }}>
 
-          {/* Mobile menu button */}
+          //Mobile menu button 
           <button onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 rounded-[8px] transition-colors mr-2"
             style={{ color: 'var(--text-muted)' }}
@@ -275,17 +274,17 @@ export default function DashboardLayout({ children, title }) {
             <Menu size={18} />
           </button>
 
-          {/* Page title */}
+          //Page title 
           <div className="text-[15px] font-bold tracking-[-0.02em]"
             style={{ color: 'var(--topbar-title)' }}>
             {title || `Welcome back, ${user?.full_name?.split(' ')[0]} 👋`}
           </div>
 
-          {/* Right side */}
+          //Right side 
           <div className="flex items-center gap-2">
             <NotificationBell />
 
-            {/* Avatar dropdown */}
+            //Avatar dropdown 
             <div className="relative">
               <button onClick={() => setDropOpen(v => !v)}
                 className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-[10px] transition-colors"
@@ -317,7 +316,7 @@ export default function DashboardLayout({ children, title }) {
                       border: '1px solid var(--drop-border)',
                       boxShadow: '0 8px 30px rgba(0,0,0,0.18)',
                     }}>
-                    {/* User info */}
+                    //User info 
                     <div className="px-4 py-2 mb-1"
                       style={{ borderBottom: '1px solid var(--drop-divider)' }}>
                       <p className="text-[12px] font-semibold"
@@ -325,19 +324,19 @@ export default function DashboardLayout({ children, title }) {
                       <p className="text-[11px] capitalize"
                         style={{ color: 'var(--drop-role)' }}>{user?.role}</p>
                     </div>
-                    {/* Profile */}
+                    //Profile 
                     <DropItem
                       to={isEmployer ? '/employer/profile' : '/candidate/profile'}
                       onClick={() => setDropOpen(false)}>
                       <User size={14} /> My Profile
                     </DropItem>
-                    {/* Settings */}
+                    //Settings 
                     <DropItem
                       to={isEmployer ? '/employer/settings' : '/candidate/settings'}
                       onClick={() => setDropOpen(false)}>
                       <Settings size={14} /> Settings
                     </DropItem>
-                    {/* Logout */}
+                    //Logout 
                     <button
                       onClick={() => { logout(); navigate('/'); setDropOpen(false); }}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-[13px] transition-colors"
@@ -353,7 +352,7 @@ export default function DashboardLayout({ children, title }) {
           </div>
         </header>
 
-        {/* Page content */}
+        //Page content 
         <main className="flex-1 overflow-y-auto p-5 sm:p-6 lg:p-8">
           {children}
         </main>

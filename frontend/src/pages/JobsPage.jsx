@@ -82,7 +82,7 @@ export default function JobsPage() {
     <div className="min-h-screen bg-dark-900">
       <Navbar />
 
-      {/* Search Header */}
+      //Search Header 
       <div className="bg-dark-800 border-b border-dark-400 py-6 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row gap-3">
@@ -118,7 +118,7 @@ export default function JobsPage() {
             </button>
           </div>
 
-          {/* Filters Panel */}
+          //Filters Panel 
           {filtersOpen && (
             <div className="mt-4 p-4 bg-dark-700 border border-dark-400 rounded-xl animate-slide-up">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -161,7 +161,7 @@ export default function JobsPage() {
         </div>
       </div>
 
-      {/* Results */}
+      //Results 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <p className="text-slate-400 text-sm">
@@ -204,7 +204,7 @@ export default function JobsPage() {
           </div>
         )}
 
-        {/* Pagination */}
+        
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-3 mt-8">
             <button

@@ -45,16 +45,16 @@ export default function LandingPage() {
     <div className="min-h-screen" style={{ background: 'var(--ink2)' }}>
       <Navbar />
 
-      {/* ── Hero ── */}
+      //Hero
       <section className="relative overflow-hidden px-5 pt-20 pb-24 sm:px-8">
-        {/* Orbs */}
+        //Orbs 
         <div className="pointer-events-none absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-100"
           style={{ background: 'radial-gradient(circle, rgba(212,168,67,0.07) 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
         <div className="pointer-events-none absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(99,91,255,0.05) 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
 
         <div className="relative max-w-3xl mx-auto text-center">
-          {/* Eyebrow */}
+          //Eyebrow 
           <div
             className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-bold tracking-[.5px] uppercase mb-7"
             style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.25)', color: '#d4a843' }}
@@ -73,7 +73,7 @@ export default function LandingPage() {
             Upload your resume once — let AI do the rest.
           </p>
 
-          {/* Search */}
+          //Search 
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-10">
             <div
               className="flex flex-col sm:flex-row gap-0 p-2 rounded-[14px]"
@@ -89,7 +89,7 @@ export default function LandingPage() {
                 />
               </div>
 
-              {/* Divider — horizontal on mobile, vertical on desktop */}
+              //Divider — horizontal on mobile, vertical on desktop 
               <div
                 className="block sm:hidden mx-3"
                 style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }}
@@ -117,7 +117,7 @@ export default function LandingPage() {
             </div>
           </form>
 
-          {/* Quick searches */}
+          //Quick searches 
           <div className="flex flex-wrap justify-center gap-2 mb-12 text-[12px]">
             <span className="text-white/25">Trending:</span>
             {['React Developer', 'Product Manager', 'Data Scientist', 'UX Designer'].map((q) => (
@@ -131,7 +131,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* Stats */}
+          //Stats 
           <div className="flex flex-wrap justify-center gap-8 sm:gap-12">
             {STATS.map(({ value, label }) => (
               <div key={label} className="text-center">
@@ -143,7 +143,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Categories ── */}
+      //Categories
       <section className="px-5 sm:px-8 py-20" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
@@ -166,7 +166,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Features ── */}
+      //Features
       <section className="px-5 sm:px-8 py-20" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#07070f' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
@@ -190,7 +190,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
       <section className="px-5 sm:px-8 py-20" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
           <div
@@ -219,7 +218,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
+      //Footer 
       <footer
         className="px-5 sm:px-8 py-8"
         style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#07070f' }}

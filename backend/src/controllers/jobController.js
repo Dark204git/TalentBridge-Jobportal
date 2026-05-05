@@ -1,13 +1,3 @@
-/**
- * jobController.js  (UPDATED)
- *
- * Changes from original:
- *  - createJob now calls triggerJobMatchingOnPost() from matchingService
- *    which generates the job embedding and finds candidates via pgvector.
- *  - updateJob re-embeds the job when description/skills change.
- *  - New export: getMatchingCandidates — employer endpoint to see AI-ranked candidates.
- */
-
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../config/supabase.js';
 import {
@@ -16,7 +6,7 @@ import {
   reEmbedJob,
 } from '../services/matchingService.js';
 
-// ── Create job ────────────────────────────────────────────────────────────────
+//Create job 
 export const createJob = async (req, res) => {
   try {
     const {
@@ -69,7 +59,7 @@ export const createJob = async (req, res) => {
   }
 };
 
-// ── List jobs (public) ────────────────────────────────────────────────────────
+//List jobs (public) ─
 export const getJobs = async (req, res) => {
   try {
     const {
@@ -111,7 +101,7 @@ export const getJobs = async (req, res) => {
   }
 };
 
-// ── Single job (public) ───────────────────────────────────────────────────────
+//Single job public 
 export const getJobById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -148,7 +138,7 @@ export const getJobById = async (req, res) => {
   }
 };
 
-// ── Update job ────────────────────────────────────────────────────────────────
+//Update job 
 export const updateJob = async (req, res) => {
   try {
     const { id } = req.params;
@@ -184,7 +174,7 @@ export const updateJob = async (req, res) => {
   }
 };
 
-// ── Close job ─────────────────────────────────────────────────────────────────
+//Close job ─
 export const deleteJob = async (req, res) => {
   try {
     const { id } = req.params;
@@ -204,7 +194,7 @@ export const deleteJob = async (req, res) => {
   }
 };
 
-// ── Employer: permanently delete a closed job ───────────────────────────────────
+//Employer: permanently delete a closed job 
 export const permanentDeleteJob = async (req, res) => {
   try {
     const { id } = req.params;
@@ -228,7 +218,7 @@ export const permanentDeleteJob = async (req, res) => {
   }
 };
 
-// ── Employer: list own jobs ───────────────────────────────────────────────────
+//Employer: list own jobs ──
 export const getEmployerJobs = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -266,12 +256,7 @@ export const getEmployerJobs = async (req, res) => {
   }
 };
 
-// ── NEW: Employer — AI-ranked candidates for a job ────────────────────────────
-/**
- * GET /api/jobs/:id/matching-candidates
- * Returns candidates ranked by vector similarity to this job.
- * Only the employer who owns the job can call this.
- */
+
 export const getMatchingCandidates = async (req, res) => {
   try {
     const { id } = req.params;

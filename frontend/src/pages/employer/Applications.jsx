@@ -29,7 +29,7 @@ function formatDOB(dob) {
   } catch { return dob; }
 }
 
-// ── Auto-Screen Confirmation Modal ───────────────────────────────────────────
+//Auto-Screen Confirmation Modal 
 function AutoScreenModal({ pendingCount, onConfirm, onCancel, loading }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -79,7 +79,7 @@ function AutoScreenModal({ pendingCount, onConfirm, onCancel, loading }) {
   );
 }
 
-// ── Auto-Screen Results Modal ─────────────────────────────────────────────────
+//Auto-Screen Results Modal 
 function ScreenResultsModal({ results, onClose }) {
   const { screened, reviewing, rejected, threshold } = results;
   return (
@@ -115,7 +115,7 @@ function ScreenResultsModal({ results, onClose }) {
   );
 }
 
-// ── Candidate Detail Panel (shared by desktop + drawer) ───────────────────────
+//Candidate Detail Panel 
 function CandidateDetail({ selectedApp, updating, deleting, onUpdateStatus, onDelete }) {
   const p = selectedApp.candidate_profiles;
 
@@ -159,7 +159,7 @@ function CandidateDetail({ selectedApp, updating, deleting, onUpdateStatus, onDe
 
   return (
     <div className="space-y-5">
-      {/* Candidate header */}
+      //Candidate header 
       <div className="flex items-start gap-4">
         <div className="w-14 h-14 bg-[#1a1a35] border border-[rgba(255,255,255,0.10)] rounded-full flex items-center justify-center text-xl font-bold text-[#d4a843] overflow-hidden flex-shrink-0">
           {p?.profile_picture
@@ -199,7 +199,7 @@ function CandidateDetail({ selectedApp, updating, deleting, onUpdateStatus, onDe
         </div>
       </div>
 
-      {/* Info grid */}
+      //Info grid 
       {(infoItems.length > 0 || links.length > 0 || p?.skills?.length > 0) && (
         <div className="bg-[#0d0d1c] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 space-y-4 text-sm">
           {infoItems.length > 0 && (
@@ -244,7 +244,7 @@ function CandidateDetail({ selectedApp, updating, deleting, onUpdateStatus, onDe
         </div>
       )}
 
-      {/* Cover Letter */}
+      //Cover Letter 
       {selectedApp.cover_letter && (
         <div>
           <p className="text-xs font-medium text-[rgba(255,255,255,0.50)] uppercase tracking-wider mb-2">Cover Letter</p>
@@ -254,7 +254,7 @@ function CandidateDetail({ selectedApp, updating, deleting, onUpdateStatus, onDe
         </div>
       )}
 
-      {/* Resume */}
+      //Resume 
       <div>
         <p className="text-xs font-medium text-[rgba(255,255,255,0.50)] uppercase tracking-wider mb-2">Resume</p>
         {resumeUrl ? (
@@ -275,7 +275,7 @@ function CandidateDetail({ selectedApp, updating, deleting, onUpdateStatus, onDe
         )}
       </div>
 
-      {/* Status Update */}
+      //Status Update 
       <div className="border-t border-[rgba(255,255,255,0.08)] pt-4">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-medium text-[rgba(255,255,255,0.50)] uppercase tracking-wider">Update Status</p>
@@ -313,7 +313,7 @@ function CandidateDetail({ selectedApp, updating, deleting, onUpdateStatus, onDe
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
+//Main Page
 export default function EmployerApplications() {
   const [searchParams] = useSearchParams();
   const preselectedJob = searchParams.get('job');
@@ -439,16 +439,16 @@ export default function EmployerApplications() {
           <ScreenResultsModal results={screenResults} onClose={() => setScreenResults(null)} />
         )}
 
-        {/* ── Mobile drawer overlay (hidden on lg+) ── */}
+        //Mobile drawer overlay 
         <div className={`lg:hidden fixed inset-0 z-40 ${selectedApp ? 'pointer-events-auto' : 'pointer-events-none'}`}>
-          {/* Backdrop */}
+          //Backdrop 
           <div
             className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${selectedApp ? 'opacity-100' : 'opacity-0'}`}
             onClick={() => setSelectedApp(null)}
           />
-          {/* Drawer */}
+          //Drawer 
           <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#07070f] border-l border-[rgba(255,255,255,0.09)] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${selectedApp ? 'translate-x-0' : 'translate-x-full'}`}>
-            {/* Drawer header with close button */}
+            //Drawer header with close button 
             <div className="flex items-center justify-between px-4 py-3 border-b border-[rgba(255,255,255,0.08)] bg-[#07070f] flex-shrink-0">
               <p className="font-semibold text-white text-sm">Applicant Details</p>
               <button
@@ -459,7 +459,7 @@ export default function EmployerApplications() {
                 <X size={18} />
               </button>
             </div>
-            {/* Drawer content */}
+            //Drawer content 
             <div className="flex-1 overflow-y-auto p-4">
               {selectedApp && (
                 <CandidateDetail
@@ -474,7 +474,7 @@ export default function EmployerApplications() {
           </div>
         </div>
 
-        {/* Header */}
+        //Header 
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <div>
             <h1 className="font-display text-3xl font-bold text-white">Applications</h1>
@@ -507,7 +507,7 @@ export default function EmployerApplications() {
           </div>
         </div>
 
-        {/* Status pills */}
+        //Status pills 
         <div className="flex gap-2 overflow-x-auto pb-2">
           {STATUSES.map(s => (
             <div key={s} className={`flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium ${statusColors[s]}`}>
@@ -519,7 +519,7 @@ export default function EmployerApplications() {
 
         <div className="grid lg:grid-cols-5 gap-4 items-start">
 
-          {/* Application list */}
+          //Application list 
           <div className="lg:col-span-2 space-y-3">
             {loading ? (
               [...Array(4)].map((_, i) => <div key={i} className="bg-[#0d0d1c] border border-[rgba(255,255,255,0.06)] rounded-[14px] animate-pulse h-20" />)
@@ -555,7 +555,7 @@ export default function EmployerApplications() {
                             <p className={`font-medium text-sm truncate ${isSelected ? 'text-[#e8c06a]' : 'text-white'}`}>
                               {app.users?.full_name}
                             </p>
-                            {/* Arrow hint on mobile */}
+                            //Arrow hint on mobile 
                             <ChevronRight size={14} className={`flex-shrink-0 lg:hidden transition-transform ${isSelected ? 'text-[#d4a843] rotate-90' : 'text-[rgba(255,255,255,0.20)]'}`} />
                           </div>
                           <p className="text-xs text-[rgba(255,255,255,0.50)] truncate">{app.users?.email}</p>
@@ -583,7 +583,7 @@ export default function EmployerApplications() {
                       </div>
                     </button>
 
-                    {/* Delete button for rejected apps */}
+                    //Delete button for rejected apps 
                     {app.status === 'rejected' && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(app.id); }}
@@ -603,7 +603,7 @@ export default function EmployerApplications() {
             )}
           </div>
 
-          {/* Desktop right panel (hidden on mobile — drawer handles it) */}
+          //Desktop right panel 
           <div className="hidden lg:block lg:col-span-3">
             {selectedApp ? (
               <div className="bg-[#07070f] border border-[rgba(255,255,255,0.09)] rounded-[14px] p-5 space-y-5 animate-fade-in">

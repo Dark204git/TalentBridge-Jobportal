@@ -1,14 +1,13 @@
--- ============================================================
--- TalentBridge Job Portal - Complete Supabase SQL Schema
--- Run this in your Supabase SQL Editor
--- ============================================================
+
+
+
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- ============================================================
+
 -- USERS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -20,9 +19,9 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- EMPLOYER PROFILES TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS employer_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -41,9 +40,9 @@ CREATE TABLE IF NOT EXISTS employer_profiles (
   UNIQUE(user_id)
 );
 
--- ============================================================
+
 -- CANDIDATE PROFILES TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS candidate_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -72,9 +71,9 @@ CREATE TABLE IF NOT EXISTS candidate_profiles (
   UNIQUE(user_id)
 );
 
--- ============================================================
+
 -- JOBS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS jobs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   employer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -98,9 +97,9 @@ CREATE TABLE IF NOT EXISTS jobs (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- APPLICATIONS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS applications (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -118,9 +117,9 @@ CREATE TABLE IF NOT EXISTS applications (
   UNIQUE(job_id, candidate_id)
 );
 
--- ============================================================
+
 -- SAVED JOBS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS saved_jobs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -129,9 +128,9 @@ CREATE TABLE IF NOT EXISTS saved_jobs (
   UNIQUE(user_id, job_id)
 );
 
--- ============================================================
+
 -- JOB VIEWS TABLE (for analytics)
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS job_views (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -139,9 +138,9 @@ CREATE TABLE IF NOT EXISTS job_views (
   viewed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- INDEXES FOR PERFORMANCE
--- ============================================================
+
 CREATE INDEX IF NOT EXISTS idx_jobs_employer_id ON jobs(employer_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_category ON jobs(category);
@@ -155,25 +154,10 @@ CREATE INDEX IF NOT EXISTS idx_job_views_job_id ON job_views(job_id);
 CREATE INDEX IF NOT EXISTS idx_candidate_profiles_user_id ON candidate_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_employer_profiles_user_id ON employer_profiles(user_id);
 
--- ============================================================
+
 -- ROW LEVEL SECURITY (RLS)
--- ============================================================
--- Note: Since we use service role key in backend, RLS is optional
--- but recommended for extra security. Enable if you want direct 
--- Supabase client calls from frontend.
 
--- ALTER TABLE users ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
 
--- ============================================================
--- PGVECTOR RPC FUNCTIONS FOR AI MATCHING
--- Run these in your Supabase SQL Editor after enabling pgvector.
--- These functions are called by matchingService.js.
--- IMPORTANT: match_threshold is passed as 0.0 from the backend —
--- do NOT add a hardcoded similarity filter here. The composite
--- scoring layer in Node.js is the real quality gate.
--- ============================================================
 
 -- Find jobs matching a candidate embedding
 
@@ -251,17 +235,13 @@ FROM jobs j
 LEFT JOIN applications a ON j.id = a.job_id
 GROUP BY j.id, j.title, j.employer_id, j.views;
 
--- ============================================================
--- TalentBridge Job Portal - Complete Supabase SQL Schema
--- Run this in your Supabase SQL Editor
--- ============================================================
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- ============================================================
+
 -- USERS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -273,9 +253,9 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- EMPLOYER PROFILES TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS employer_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -294,9 +274,9 @@ CREATE TABLE IF NOT EXISTS employer_profiles (
   UNIQUE(user_id)
 );
 
--- ============================================================
+
 -- CANDIDATE PROFILES TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS candidate_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -325,9 +305,9 @@ CREATE TABLE IF NOT EXISTS candidate_profiles (
   UNIQUE(user_id)
 );
 
--- ============================================================
+
 -- JOBS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS jobs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   employer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -351,9 +331,9 @@ CREATE TABLE IF NOT EXISTS jobs (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- APPLICATIONS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS applications (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -371,9 +351,9 @@ CREATE TABLE IF NOT EXISTS applications (
   UNIQUE(job_id, candidate_id)
 );
 
--- ============================================================
+
 -- SAVED JOBS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS saved_jobs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -382,9 +362,9 @@ CREATE TABLE IF NOT EXISTS saved_jobs (
   UNIQUE(user_id, job_id)
 );
 
--- ============================================================
+
 -- JOB VIEWS TABLE (for analytics)
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS job_views (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -392,9 +372,9 @@ CREATE TABLE IF NOT EXISTS job_views (
   viewed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- INDEXES FOR PERFORMANCE
--- ============================================================
+
 CREATE INDEX IF NOT EXISTS idx_jobs_employer_id ON jobs(employer_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_category ON jobs(category);
@@ -408,20 +388,6 @@ CREATE INDEX IF NOT EXISTS idx_job_views_job_id ON job_views(job_id);
 CREATE INDEX IF NOT EXISTS idx_candidate_profiles_user_id ON candidate_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_employer_profiles_user_id ON employer_profiles(user_id);
 
--- ============================================================
--- ROW LEVEL SECURITY (RLS)
--- ============================================================
--- Note: Since we use service role key in backend, RLS is optional
--- but recommended for extra security. Enable if you want direct 
--- Supabase client calls from frontend.
-
--- ALTER TABLE users ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
-
--- ============================================================
--- HELPFUL VIEWS
--- ============================================================
 
 -- Jobs with employer info
 CREATE OR REPLACE VIEW jobs_with_company AS
@@ -449,10 +415,10 @@ FROM jobs j
 LEFT JOIN applications a ON j.id = a.job_id
 GROUP BY j.id, j.title, j.employer_id, j.views;
 
--- ═══════════════════════════════════════════════════════════════════════════════
+
 -- pgvector similarity search functions
 -- DROP first so return type can be changed safely on re-runs.
--- ═══════════════════════════════════════════════════════════════════════════════
+
 
 DROP FUNCTION IF EXISTS match_jobs_for_candidate(vector, float, int);
 DROP FUNCTION IF EXISTS match_candidates_for_job(vector, float, int);
@@ -603,25 +569,19 @@ BEGIN
 END;
 $$;
 
--- ============================================================
+
 -- pgvector RPC Functions for AI Job Matching
--- ============================================================
--- Run this in your Supabase SQL Editor (Dashboard → SQL Editor → New Query).
--- These functions are called by matchingService.js via supabase.rpc().
--- Requires the pgvector extension (enabled by default on Supabase).
--- ============================================================
+
 DROP FUNCTION IF EXISTS match_jobs_for_candidate(vector, double precision, integer);
 DROP FUNCTION IF EXISTS match_candidates_for_job(vector, double precision, integer);
 
 -- Enable pgvector if not already enabled
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- ── 1. match_jobs_for_candidate ───────────────────────────────────────────────
--- Given a candidate embedding, returns the top N active jobs
--- ordered by cosine similarity (highest first).
---
+-- 1. match_jobs_for_candidate 
+
 -- Called by: findMatchingJobsForCandidate()
--- ─────────────────────────────────────────────────────────────────────────────
+
 CREATE OR REPLACE FUNCTION match_jobs_for_candidate(
   query_embedding  vector(384),
   match_threshold  float   DEFAULT 0.20,
@@ -681,12 +641,8 @@ END;
 $$;
 
 
--- ── 2. match_candidates_for_job ───────────────────────────────────────────────
--- Given a job embedding, returns the top N candidates
--- ordered by cosine similarity (highest first).
---
--- Called by: findMatchingCandidatesForJob(), triggerJobMatchingOnPost()
--- ─────────────────────────────────────────────────────────────────────────────
+-- 2. match_candidates_for_job
+
 CREATE OR REPLACE FUNCTION match_candidates_for_job(
   query_embedding  vector(384),
   match_threshold  float   DEFAULT 0.20,
@@ -723,32 +679,13 @@ END;
 $$;
 
 
--- ── 3. Optional: HNSW index for fast ANN search ───────────────────────────────
--- Only needed if you have 10 000+ jobs or candidates.
--- The cosine operator class (<=> with vector_cosine_ops) matches the
--- <=> operator used in the functions above.
--- Comment this out if you are on a free Supabase plan (index creation can time out).
---
--- CREATE INDEX IF NOT EXISTS idx_jobs_embedding_hnsw
---   ON jobs USING hnsw (embedding vector_cosine_ops)
---   WITH (m = 16, ef_construction = 64);
---
--- CREATE INDEX IF NOT EXISTS idx_candidate_profiles_embedding_hnsw
---   ON candidate_profiles USING hnsw (embedding vector_cosine_ops)
---   WITH (m = 16, ef_construction = 64);
+--  3. Optional: HNSW index for fast ANN search 
 
--- ============================================================
--- TalentBridge Job Portal - Complete Supabase SQL Schema
--- Fixed version: no duplicate function definitions
--- Run this in your Supabase SQL Editor
--- ============================================================
-
--- ── Extensions ────────────────────────────────────────────────────────────────
+-- Extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- ── Tables ────────────────────────────────────────────────────────────────────
-
+-- Tables 
 CREATE TABLE IF NOT EXISTS users (
   id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email         VARCHAR(255) UNIQUE NOT NULL,
@@ -886,8 +823,7 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ── Indexes ───────────────────────────────────────────────────────────────────
-
+--  Indexes 
 CREATE INDEX IF NOT EXISTS idx_jobs_employer_id          ON jobs(employer_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status               ON jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_category             ON jobs(category);
@@ -906,7 +842,7 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user_id      ON notifications(user_
 CREATE INDEX IF NOT EXISTS idx_notifications_is_read      ON notifications(user_id, is_read);
 CREATE INDEX IF NOT EXISTS idx_notifications_created      ON notifications(created_at DESC);
 
--- ── HNSW vector indexes (fast approximate nearest-neighbour) ──────────────────
+-- HNSW vector indxes (fast approximate nearest-neighbour
 
 CREATE INDEX IF NOT EXISTS idx_jobs_embedding_hnsw
   ON jobs USING hnsw (embedding vector_cosine_ops)
@@ -916,7 +852,7 @@ CREATE INDEX IF NOT EXISTS idx_candidates_embedding_hnsw
   ON candidate_profiles USING hnsw (embedding vector_cosine_ops)
   WITH (m = 16, ef_construction = 64);
 
--- ── Views ─────────────────────────────────────────────────────────────────────
+-- Views
 
 CREATE OR REPLACE VIEW jobs_with_company AS
 SELECT
@@ -942,15 +878,12 @@ FROM jobs j
 LEFT JOIN applications a ON j.id = a.job_id
 GROUP BY j.id, j.title, j.employer_id, j.views;
 
--- ── pgvector functions ────────────────────────────────────────────────────────
--- DROP first to allow changing return type cleanly on re-runs.
+--  pgvector functions
 
 DROP FUNCTION IF EXISTS match_jobs_for_candidate(vector, float, int);
 DROP FUNCTION IF EXISTS match_candidates_for_job(vector, float, int);
 
--- Returns active jobs ranked by cosine similarity to a candidate embedding.
--- NOTE: pgvector <=> is cosine DISTANCE (lower = more similar),
---       so similarity = 1 - distance.
+
 CREATE FUNCTION match_jobs_for_candidate(
   query_embedding  vector(384),
   match_threshold  float  DEFAULT 0.20,
@@ -1032,7 +965,7 @@ AS $$
   LIMIT match_count;
 $$;
 
--- ── Clear stale embeddings (forces re-generation with improved text builders) ──
+--  Clear stale embeddings 
 UPDATE candidate_profiles SET embedding = NULL;
 UPDATE jobs               SET embedding = NULL WHERE status = 'active';
 
@@ -1042,18 +975,14 @@ ALTER TABLE candidate_profiles
   ADD COLUMN IF NOT EXISTS phone_number   TEXT,
   ADD COLUMN IF NOT EXISTS lives_in       TEXT;
 
--- ============================================================
--- TalentBridge Job Portal - Complete Supabase SQL Schema
--- Run this in your Supabase SQL Editor
--- ============================================================
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 create extension if not exists vector with schema extensions;
 
--- ============================================================
+
 -- USERS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -1065,9 +994,9 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- EMPLOYER PROFILES TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS employer_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1086,9 +1015,9 @@ CREATE TABLE IF NOT EXISTS employer_profiles (
   UNIQUE(user_id)
 );
 
--- ============================================================
+
 -- CANDIDATE PROFILES TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS candidate_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1117,9 +1046,9 @@ CREATE TABLE IF NOT EXISTS candidate_profiles (
   UNIQUE(user_id)
 );
 
--- ============================================================
+
 -- JOBS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS jobs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   employer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1143,9 +1072,9 @@ CREATE TABLE IF NOT EXISTS jobs (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- APPLICATIONS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS applications (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -1163,9 +1092,9 @@ CREATE TABLE IF NOT EXISTS applications (
   UNIQUE(job_id, candidate_id)
 );
 
--- ============================================================
+
 -- SAVED JOBS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS saved_jobs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1174,9 +1103,9 @@ CREATE TABLE IF NOT EXISTS saved_jobs (
   UNIQUE(user_id, job_id)
 );
 
--- ============================================================
+
 -- JOB VIEWS TABLE (for analytics)
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS job_views (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -1184,9 +1113,9 @@ CREATE TABLE IF NOT EXISTS job_views (
   viewed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- INDEXES FOR PERFORMANCE
--- ============================================================
+
 CREATE INDEX IF NOT EXISTS idx_jobs_employer_id ON jobs(employer_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_category ON jobs(category);
@@ -1200,20 +1129,7 @@ CREATE INDEX IF NOT EXISTS idx_job_views_job_id ON job_views(job_id);
 CREATE INDEX IF NOT EXISTS idx_candidate_profiles_user_id ON candidate_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_employer_profiles_user_id ON employer_profiles(user_id);
 
--- ============================================================
--- ROW LEVEL SECURITY (RLS)
--- ============================================================
--- Note: Since we use service role key in backend, RLS is optional
--- but recommended for extra security. Enable if you want direct 
--- Supabase client calls from frontend.
 
--- ALTER TABLE users ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
-
--- ============================================================
--- HELPFUL VIEWS
--- ============================================================
 
 -- Jobs with employer info
 CREATE OR REPLACE VIEW jobs_with_company AS
@@ -1282,18 +1198,14 @@ create table table_name (
   name text
 );
 
--- ============================================================
--- TalentBridge Job Portal - Complete Supabase SQL Schema
--- Run this in your Supabase SQL Editor
--- ============================================================
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 create extension if not exists vector with schema extensions;
 
--- ============================================================
+
 -- USERS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -1305,9 +1217,9 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- EMPLOYER PROFILES TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS employer_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1326,9 +1238,9 @@ CREATE TABLE IF NOT EXISTS employer_profiles (
   UNIQUE(user_id)
 );
 
--- ============================================================
+
 -- CANDIDATE PROFILES TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS candidate_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1357,9 +1269,9 @@ CREATE TABLE IF NOT EXISTS candidate_profiles (
   UNIQUE(user_id)
 );
 
--- ============================================================
+
 -- JOBS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS jobs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   employer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1383,9 +1295,9 @@ CREATE TABLE IF NOT EXISTS jobs (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- APPLICATIONS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS applications (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -1403,9 +1315,9 @@ CREATE TABLE IF NOT EXISTS applications (
   UNIQUE(job_id, candidate_id)
 );
 
--- ============================================================
+
 -- SAVED JOBS TABLE
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS saved_jobs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1414,9 +1326,9 @@ CREATE TABLE IF NOT EXISTS saved_jobs (
   UNIQUE(user_id, job_id)
 );
 
--- ============================================================
+
 -- JOB VIEWS TABLE (for analytics)
--- ============================================================
+
 CREATE TABLE IF NOT EXISTS job_views (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -1424,9 +1336,9 @@ CREATE TABLE IF NOT EXISTS job_views (
   viewed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
+
 -- INDEXES FOR PERFORMANCE
--- ============================================================
+
 CREATE INDEX IF NOT EXISTS idx_jobs_employer_id ON jobs(employer_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_category ON jobs(category);
@@ -1440,20 +1352,7 @@ CREATE INDEX IF NOT EXISTS idx_job_views_job_id ON job_views(job_id);
 CREATE INDEX IF NOT EXISTS idx_candidate_profiles_user_id ON candidate_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_employer_profiles_user_id ON employer_profiles(user_id);
 
--- ============================================================
--- ROW LEVEL SECURITY (RLS)
--- ============================================================
--- Note: Since we use service role key in backend, RLS is optional
--- but recommended for extra security. Enable if you want direct 
--- Supabase client calls from frontend.
 
--- ALTER TABLE users ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
-
--- ============================================================
--- HELPFUL VIEWS
--- ============================================================
 
 -- Jobs with employer info
 CREATE OR REPLACE VIEW jobs_with_company AS
@@ -1511,7 +1410,7 @@ ALTER TABLE applications
   ADD COLUMN IF NOT EXISTS match_score INTEGER;
 
 -- 4. HNSW indexes for fast approximate nearest-neighbour search
---    (much faster than exact cosine scan on large tables)
+
 CREATE INDEX IF NOT EXISTS idx_candidate_embedding
   ON candidate_profiles
   USING hnsw (embedding vector_cosine_ops);
@@ -1520,11 +1419,9 @@ CREATE INDEX IF NOT EXISTS idx_job_embedding
   ON jobs
   USING hnsw (embedding vector_cosine_ops);
 
--- ============================================================
+
 -- 5. match_jobs_for_candidate(candidate_embedding, limit)
---    Returns active jobs ranked by cosine similarity to a
---    candidate's resume embedding.
--- ============================================================
+
 CREATE OR REPLACE FUNCTION match_jobs_for_candidate(
   query_embedding   vector(384),
   match_threshold   float    DEFAULT 0.3,
@@ -1566,11 +1463,9 @@ AS $$
   LIMIT match_count;
 $$;
 
--- ============================================================
+
 -- 6. match_candidates_for_job(job_embedding, limit)
---    Returns candidates ranked by cosine similarity to a
---    job description embedding. Used by employers.
--- ============================================================
+
 CREATE OR REPLACE FUNCTION match_candidates_for_job(
   query_embedding   vector(384),
   match_threshold   float    DEFAULT 0.3,

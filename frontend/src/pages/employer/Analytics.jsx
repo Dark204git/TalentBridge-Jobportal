@@ -1,38 +1,60 @@
 import { useState, useEffect } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  FunnelChart, Funnel, LabelList, Cell,
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 import { Eye, Clock, TrendingUp, Star } from 'lucide-react';
 import DashboardLayout from '../../components/common/DashboardLayout';
 import { analyticsAPI } from '../../services/api';
 
-// ── KPI card ──────────────────────────────────────────────────────────────────
-const KpiCard = ({ icon: Icon, label, value, sub }) => (
-  <div className="card">
-    <div className="flex items-center justify-between mb-3">
-      <p className="text-sm text-slate-400">{label}</p>
-      <Icon size={16} className="text-brand-400" />
-    </div>
-    <p className="font-display text-4xl font-bold text-white">{value ?? '—'}</p>
-    {sub && <p className="text-xs text-slate-500 mt-1">{sub}</p>}
-  </div>
-);
+/* ── helpers ── */
+const FUNNEL_COLORS = ['#64748b', '#3b82f6', '#f0c040', '#8b5cf6', '#10b981'];
 
-// ── Tooltip shared style ──────────────────────────────────────────────────────
-const TooltipBox = ({ active, payload, label, unit = 'applications' }) => {
-  if (!active || !payload?.length) return null;
+const scoreColor = (s) =>
+  s >= 80 ? '#10b981' : s >= 60 ? '#f0c040' : s >= 40 ? '#3b82f6' : '#64748b';
+
+/* ── KPI card ── */
+function KpiCard({ icon: Icon, label, value, sub }) {
   return (
-    <div className="bg-dark-600 border border-dark-400 rounded-lg px-3 py-2 text-sm">
-      <p className="text-slate-300 mb-1">{label}</p>
-      <p className="text-brand-400 font-semibold">{payload[0].value} {unit}</p>
+    <div className="card">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{label}</p>
+        <Icon size={16} style={{ color: 'var(--gold)' }} />
+      </div>
+      <p className="text-4xl font-bold tracking-tight" style={{ color: 'var(--text)' }}>
+        {value ?? '—'}
+      </p>
+      {sub && <p className="text-xs mt-1" style={{ color: 'var(--slate2)' }}>{sub}</p>}
     </div>
   );
-};
+}
 
-// ── Score badge colour ────────────────────────────────────────────────────────
-const scoreBg  = (s) => s >= 80 ? 'bg-emerald-500' : s >= 60 ? 'bg-brand-500' : s >= 40 ? 'bg-blue-500' : 'bg-slate-500';
-const FUNNEL_COLORS = ['#64748b', '#3b82f6', '#f0c040', '#8b5cf6', '#10b981'];
+/* ── Recharts custom tooltip ── */
+function ChartTooltip({ active, payload, label, unit = 'applications' }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: 'var(--drop-bg)',
+      border: '1px solid var(--drop-border)',
+      borderRadius: 8, padding: '8px 12px', fontSize: 13,
+      boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+    }}>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 4 }}>{label}</p>
+      <p style={{ color: 'var(--gold)', fontWeight: 600 }}>{payload[0].value} {unit}</p>
+    </div>
+  );
+}
+
+/* ── Section card wrapper ── */
+function SectionCard({ title, subtitle, children }) {
+  return (
+    <div className="card">
+      <h2 className="font-semibold mb-1" style={{ fontSize: 15, color: 'var(--text)' }}>{title}</h2>
+      {subtitle && <p className="text-xs mb-5" style={{ color: 'var(--slate2)' }}>{subtitle}</p>}
+      {!subtitle && <div style={{ height: 20 }} />}
+      {children}
+    </div>
+  );
+}
 
 export default function EmployerAnalytics() {
   const [data, setData]       = useState(null);
@@ -45,18 +67,20 @@ export default function EmployerAnalytics() {
       .finally(() => setLoading(false));
   }, []);
 
-  const kpis             = data?.kpis || {};
-  const weeklyTrend      = data?.weeklyTrend || [];
-  const funnel           = data?.funnel || [];
-  const scoreDist        = data?.scoreDistribution || [];
-  const jobPerformance   = data?.jobPerformance || [];
+  const kpis           = data?.kpis || {};
+  const weeklyTrend    = data?.weeklyTrend || [];
+  const funnel         = data?.funnel || [];
+  const scoreDist      = data?.scoreDistribution || [];
+  const jobPerformance = data?.jobPerformance || [];
 
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
+
+        {/* Page title */}
         <div>
-          <h1 className="font-display text-3xl font-bold text-white">Analytics</h1>
-          <p className="text-slate-400 mt-1">Hiring performance over time</p>
+          <h1 className="text-3xl font-bold" style={{ color: 'var(--text)' }}>Analytics</h1>
+          <p className="mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>Hiring performance over time</p>
         </div>
 
         {loading ? (
@@ -65,46 +89,59 @@ export default function EmployerAnalytics() {
           </div>
         ) : (
           <>
-            {/* KPI cards — performance metrics, not daily counts */}
+            {/* KPI row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <KpiCard icon={Eye}       label="Total Views"        value={kpis.totalViews?.toLocaleString()}  sub="across all job posts" />
-              <KpiCard icon={Clock}     label="Avg. Time to Hire"  value={kpis.avgTimeToHire != null ? `${kpis.avgTimeToHire}d` : null} sub="applied → offered" />
+              <KpiCard icon={Eye}        label="Total Views"       value={kpis.totalViews?.toLocaleString()} sub="across all job posts" />
+              <KpiCard icon={Clock}      label="Avg. Time to Hire" value={kpis.avgTimeToHire != null ? `${kpis.avgTimeToHire}d` : null} sub="applied → offered" />
               <KpiCard icon={TrendingUp} label="Offer Rate"        value={kpis.offerRate != null ? `${kpis.offerRate}%` : null} sub="of interviewed candidates" />
-              <KpiCard icon={Star}      label="Avg. Match Score"   value={kpis.avgMatchScore != null ? `${kpis.avgMatchScore}%` : null} sub="across all applications" />
+              <KpiCard icon={Star}       label="Avg. Match Score"  value={kpis.avgMatchScore != null ? `${kpis.avgMatchScore}%` : null} sub="across all applications" />
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6">
-              {/* Weekly trend — real date labels */}
-              <div className="card">
-                <h2 className="font-semibold text-white mb-5">Weekly Applications</h2>
+
+              {/* Weekly trend bar chart */}
+              <SectionCard title="Weekly Applications">
                 {weeklyTrend.length > 0 ? (
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={weeklyTrend} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                      <XAxis dataKey="week" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                      <Tooltip content={<TooltipBox />} />
-                      <Bar dataKey="applications" fill="#f0c040" radius={[4, 4, 0, 0]} />
+                      <XAxis
+                        dataKey="week"
+                        tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
+                        axisLine={false} tickLine={false}
+                      />
+                      <YAxis
+                        tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
+                        axisLine={false} tickLine={false} allowDecimals={false}
+                      />
+                      <Tooltip content={<ChartTooltip />} cursor={{ fill: 'var(--line)' }} />
+                      <Bar dataKey="applications" fill="var(--gold)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-52 flex items-center justify-center text-slate-500 text-sm">No data yet</div>
+                  <div className="h-52 flex items-center justify-center text-sm"
+                    style={{ color: 'var(--slate2)' }}>No data yet</div>
                 )}
-              </div>
+              </SectionCard>
 
-              {/* Application funnel */}
-              <div className="card">
-                <h2 className="font-semibold text-white mb-5">Hiring Funnel</h2>
+              {/* Hiring funnel */}
+              <SectionCard title="Hiring Funnel">
                 {funnel.some(f => f.count > 0) ? (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {funnel.map((stage, i) => (
                       <div key={stage.stage}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="capitalize text-slate-300">{stage.stage}</span>
-                          <span className="text-slate-400">{stage.count} <span className="text-slate-600">({stage.pct}%)</span></span>
+                        <div className="flex justify-between text-sm mb-1.5">
+                          <span className="capitalize font-medium" style={{ color: 'var(--text)' }}>
+                            {stage.stage}
+                          </span>
+                          <span style={{ color: 'var(--text-muted)' }}>
+                            {stage.count}{' '}
+                            <span style={{ color: 'var(--slate2)' }}>({stage.pct}%)</span>
+                          </span>
                         </div>
-                        <div className="h-7 bg-dark-500 rounded-lg overflow-hidden">
+                        <div className="h-7 rounded-lg overflow-hidden"
+                          style={{ background: 'var(--line2)' }}>
                           <div
-                            className="h-full rounded-lg transition-all flex items-center px-2"
+                            className="h-full rounded-lg transition-all"
                             style={{
                               width: `${Math.max(stage.pct, 2)}%`,
                               backgroundColor: FUNNEL_COLORS[i],
@@ -116,15 +153,14 @@ export default function EmployerAnalytics() {
                     ))}
                   </div>
                 ) : (
-                  <div className="h-52 flex items-center justify-center text-slate-500 text-sm">No applications yet</div>
+                  <div className="h-52 flex items-center justify-center text-sm"
+                    style={{ color: 'var(--slate2)' }}>No applications yet</div>
                 )}
-              </div>
+              </SectionCard>
             </div>
 
             {/* Match score distribution */}
-            <div className="card">
-              <h2 className="font-semibold text-white mb-5">Match Score Distribution</h2>
-              <p className="text-xs text-slate-500 mb-4">How well applicants match your job requirements</p>
+            <SectionCard title="Match Score Distribution" subtitle="How well applicants match your job requirements">
               {scoreDist.some(b => b.count > 0) ? (
                 <div className="grid grid-cols-4 gap-3">
                   {scoreDist.map(({ range, count }) => {
@@ -133,60 +169,74 @@ export default function EmployerAnalytics() {
                     const barH = Math.max((count / maxCount) * 80, count > 0 ? 8 : 2);
                     return (
                       <div key={range} className="flex flex-col items-center gap-2">
-                        <span className="text-sm font-medium text-white">{count}</span>
-                        <div className="w-full bg-dark-500 rounded-lg overflow-hidden" style={{ height: 80 }}>
+                        <span className="text-sm font-semibold" style={{ color: 'var(--text)' }}>{count}</span>
+                        <div className="w-full rounded-lg overflow-hidden" style={{ height: 80, background: 'var(--line2)' }}>
                           <div
-                            className={`w-full rounded-lg transition-all ${scoreBg(score + 20)}`}
-                            style={{ height: `${barH}px`, marginTop: `${80 - barH}px` }}
+                            className="w-full rounded-lg transition-all"
+                            style={{
+                              height: `${barH}px`,
+                              marginTop: `${80 - barH}px`,
+                              backgroundColor: scoreColor(score + 20),
+                            }}
                           />
                         </div>
-                        <span className="text-xs text-slate-500">{range}%</span>
+                        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{range}%</span>
                       </div>
                     );
                   })}
                 </div>
               ) : (
-                <div className="h-24 flex items-center justify-center text-slate-500 text-sm">No scored applications yet</div>
+                <div className="h-24 flex items-center justify-center text-sm"
+                  style={{ color: 'var(--slate2)' }}>No scored applications yet</div>
               )}
-            </div>
+            </SectionCard>
 
-            {/* Job performance — all jobs with avg match score */}
-            <div className="card">
-              <h2 className="font-semibold text-white mb-5">Job Performance</h2>
+            {/* Job performance table */}
+            <SectionCard title="Job Performance">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-dark-400">
-                      <th className="text-left text-slate-500 font-medium py-2 pr-4">Job Title</th>
-                      <th className="text-right text-slate-500 font-medium py-2 px-3">Views</th>
-                      <th className="text-right text-slate-500 font-medium py-2 px-3">Apps</th>
-                      <th className="text-right text-slate-500 font-medium py-2 px-3">CTR</th>
-                      <th className="text-right text-slate-500 font-medium py-2 px-3">Avg Match</th>
-                      <th className="text-right text-slate-500 font-medium py-2 pl-3">Status</th>
+                    <tr style={{ borderBottom: '1px solid var(--line2)' }}>
+                      {['Job Title','Views','Apps','CTR','Avg Match','Status'].map((h, i) => (
+                        <th key={h}
+                          className={`py-2 font-semibold ${i === 0 ? 'text-left pr-4' : 'text-right px-3'} ${i === 5 ? 'pl-3' : ''}`}
+                          style={{ color: 'var(--text-muted)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          {h}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
                     {jobPerformance.length === 0 ? (
-                      <tr><td colSpan={6} className="py-8 text-center text-slate-500">No jobs yet</td></tr>
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center" style={{ color: 'var(--slate2)' }}>No jobs yet</td>
+                      </tr>
                     ) : jobPerformance.map(job => (
-                      <tr key={job.id} className="border-b border-dark-400/50 hover:bg-dark-600/50 transition-colors">
-                        <td className="py-3 pr-4 text-white font-medium">{job.title}</td>
-                        <td className="py-3 px-3 text-right text-slate-400">{job.views || 0}</td>
-                        <td className="py-3 px-3 text-right text-slate-400">{job.applicationCount}</td>
-                        <td className="py-3 px-3 text-right text-slate-400">
+                      <tr key={job.id}
+                        style={{ borderBottom: '1px solid var(--line)' }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'var(--line)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                        <td className="py-3 pr-4 font-semibold" style={{ color: 'var(--text)' }}>{job.title}</td>
+                        <td className="py-3 px-3 text-right" style={{ color: 'var(--text-muted)' }}>{job.views || 0}</td>
+                        <td className="py-3 px-3 text-right" style={{ color: 'var(--text-muted)' }}>{job.applicationCount}</td>
+                        <td className="py-3 px-3 text-right" style={{ color: 'var(--text-muted)' }}>
                           {job.ctr != null ? `${job.ctr}%` : '—'}
                         </td>
                         <td className="py-3 px-3 text-right">
                           {job.avgMatchScore != null ? (
-                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium text-white ${scoreBg(job.avgMatchScore)}`}>
+                            <span style={{
+                              display: 'inline-block', padding: '2px 8px', borderRadius: 6,
+                              fontSize: 12, fontWeight: 600, color: '#fff',
+                              background: scoreColor(job.avgMatchScore),
+                            }}>
                               {job.avgMatchScore}%
                             </span>
                           ) : (
-                            <span className="text-slate-600">—</span>
+                            <span style={{ color: 'var(--slate2)' }}>—</span>
                           )}
                         </td>
                         <td className="py-3 pl-3 text-right">
-                          <span className={`badge ${job.status === 'active' ? 'badge-green' : 'bg-slate-500/20 text-slate-400 badge'}`}>
+                          <span className={job.status === 'active' ? 'badge-green badge' : 'badge-gray badge'}>
                             {job.status}
                           </span>
                         </td>
@@ -195,7 +245,7 @@ export default function EmployerAnalytics() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </SectionCard>
           </>
         )}
       </div>

@@ -4,51 +4,94 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-/* ── Design Tokens (dark-mode defaults — JS overrides on theme change) ── */
+/* ── Design Tokens — dark defaults, JS rewrites on theme change ── */
 :root {
-  /* Accent */
   --gold:        #d4a843;
   --gold2:       #e8c06a;
   --gold3:       rgba(212,168,67,0.14);
   --gold4:       rgba(212,168,67,0.07);
   --gold-border: rgba(212,168,67,0.28);
 
-  /* Surfaces */
-  --ink:  #07070f;
-  --ink2: #0d0d1c;
-  --ink3: #13132a;
-  --ink4: #1a1a35;
-  --ink5: #242452;
+  --ink:   #07070f;
+  --ink2:  #0d0d1c;
+  --ink3:  #13132a;
+  --ink4:  #1a1a35;
+  --ink5:  #242452;
 
-  /* Borders */
   --line:  rgba(255,255,255,0.07);
   --line2: rgba(255,255,255,0.12);
 
-  /* Muted text */
   --slate:  rgba(255,255,255,0.55);
   --slate2: rgba(255,255,255,0.35);
   --slate3: rgba(255,255,255,0.18);
 
-  /* Text */
   --text:        #ffffff;
   --text-body:   rgba(255,255,255,0.85);
   --text-muted:  rgba(255,255,255,0.45);
   --placeholder: rgba(255,255,255,0.25);
+
+  --card-bg:     #07070f;
+  --card-border: rgba(255,255,255,0.07);
+
+  --input-bg:     #13132a;
+  --input-border: rgba(255,255,255,0.12);
+  --input-text:   #ffffff;
+
+  --sidebar-bg:          #07070f;
+  --sidebar-border:      rgba(255,255,255,0.07);
+  --sidebar-text:        rgba(255,255,255,0.45);
+  --sidebar-text-hover:  #ffffff;
+  --sidebar-hover-bg:    rgba(255,255,255,0.05);
+  --sidebar-divider:     rgba(255,255,255,0.08);
+  --sidebar-user-bg:     rgba(255,255,255,0.05);
+  --sidebar-user-border: rgba(255,255,255,0.08);
+  --sidebar-name:        #ffffff;
+  --sidebar-role:        rgba(255,255,255,0.35);
+
+  --topbar-bg:     #07070f;
+  --topbar-border: rgba(255,255,255,0.07);
+  --topbar-title:  #ffffff;
+
+  --drop-bg:         #13132a;
+  --drop-border:     rgba(255,255,255,0.12);
+  --drop-divider:    rgba(255,255,255,0.07);
+  --drop-name:       #ffffff;
+  --drop-role:       rgba(255,255,255,0.35);
+  --drop-item:       rgba(255,255,255,0.55);
+  --drop-item-hover: #ffffff;
+  --drop-hover-bg:   rgba(255,255,255,0.05);
+
+  --settings-card-bg:     #07070f;
+  --settings-card-border: rgba(255,255,255,0.07);
+  --settings-title:       #ffffff;
+  --settings-desc:        rgba(255,255,255,0.38);
+  --settings-divider:     rgba(255,255,255,0.06);
+  --theme-btn-bg:         rgba(255,255,255,0.03);
+  --theme-btn-border:     rgba(255,255,255,0.08);
+  --theme-btn-text:       rgba(255,255,255,0.70);
+  --theme-btn-desc:       rgba(255,255,255,0.35);
+  --strength-empty:       rgba(255,255,255,0.08);
+  --danger-card-bg:       rgba(239,68,68,0.04);
+  --danger-inner-bg:      rgba(239,68,68,0.05);
+  --danger-text:          #ffffff;
+  --danger-desc:          rgba(255,255,255,0.40);
+  --modal-bg:             #0d0d1c;
+  --modal-body-text:      rgba(255,255,255,0.65);
+  --modal-confirm-text:   #ffffff;
+  --eye-btn:              rgba(255,255,255,0.30);
+  --eye-btn-hover:        rgba(255,255,255,0.60);
 }
 
 /* ── Base ── */
 *, *::before, *::after { box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
-
 body {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   background-color: var(--ink2);
   color: var(--text-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s, color 0.25s;
 }
 
 /* ── Scrollbar ── */
@@ -67,179 +110,83 @@ h1, h2, h3, h4 {
 /* ── Components ── */
 @layer components {
 
-  /* ── Buttons ── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2
-           font-bold px-5 py-2.5 rounded-[10px] text-sm
-           active:scale-[.98] transition-all duration-150
-           disabled:opacity-40 disabled:cursor-not-allowed
-           focus-visible:outline-none focus-visible:ring-2;
+    @apply inline-flex items-center justify-center gap-2 font-bold px-5 py-2.5 rounded-[10px] text-sm active:scale-[.98] transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none;
     background-color: var(--gold);
-    color: #07070f; /* always dark text for contrast on accent bg */
+    color: #07070f;
   }
   .btn-primary:hover:not(:disabled) { background-color: var(--gold2); }
-  .btn-primary:focus-visible { ring-color: var(--gold3); outline-color: var(--gold); }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2
-           bg-transparent font-medium px-5 py-2.5 rounded-[10px] text-sm
-           active:scale-[.98] transition-all duration-150
-           disabled:opacity-40 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 bg-transparent font-medium px-5 py-2.5 rounded-[10px] text-sm active:scale-[.98] transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
     color: var(--slate);
     border: 1px solid var(--line2);
   }
-  .btn-secondary:hover:not(:disabled) {
-    background-color: var(--slate3);
-    color: var(--text);
-  }
+  .btn-secondary:hover:not(:disabled) { background-color: var(--slate3); color: var(--text); }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2
-           font-medium px-4 py-2 rounded-[8px] text-sm
-           transition-all duration-150;
+    @apply inline-flex items-center justify-center gap-2 font-medium px-4 py-2 rounded-[8px] text-sm transition-all duration-150;
     color: var(--text-muted);
   }
-  .btn-ghost:hover {
-    color: var(--text);
-    background-color: var(--line);
-  }
+  .btn-ghost:hover { color: var(--text); background-color: var(--line); }
 
-  /* ── Cards ── */
   .card {
     @apply rounded-[14px] p-5 transition-all duration-200;
-    background-color: var(--ink);
-    border: 1px solid var(--line);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
   }
-
-  .card-hover {
-    @apply card cursor-pointer hover:-translate-y-0.5;
-  }
-  .card-hover:hover {
-    border-color: var(--gold-border);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-  }
+  .card-hover { @apply card cursor-pointer hover:-translate-y-0.5; }
+  .card-hover:hover { border-color: var(--gold-border); box-shadow: 0 8px 30px rgba(0,0,0,0.18); }
 
   .card-featured {
     @apply card cursor-pointer hover:-translate-y-0.5 transition-all duration-200;
     border-color: var(--gold-border);
-    background: linear-gradient(135deg, var(--ink3) 0%, var(--ink) 100%);
   }
   .card-featured:hover { border-color: var(--gold2); }
 
-  /* ── Form elements ── */
   .input {
-    @apply w-full rounded-[10px] px-4 py-2.5
-           text-sm font-medium
-           focus:outline-none focus:ring-1
-           transition-all duration-150;
-    background-color: var(--ink3);
-    border: 1px solid var(--line2);
-    color: var(--text);
+    @apply w-full rounded-[10px] px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-1 transition-all duration-150;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--input-text);
   }
   .input::placeholder { color: var(--placeholder); }
-  .input:focus {
-    border-color: var(--gold-border);
-    --tw-ring-color: var(--gold4);
-  }
+  .input:focus { border-color: var(--gold-border); --tw-ring-color: var(--gold4); }
 
   .label {
     @apply block text-[10px] font-bold tracking-[0.1em] uppercase mb-1.5;
     color: var(--slate2);
   }
+  .select { @apply input appearance-none cursor-pointer; }
 
-  .select {
-    @apply input appearance-none cursor-pointer;
-  }
+  .badge { @apply inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[11px] font-semibold tracking-[0.2px]; }
+  .badge-gold { @apply badge; background-color: var(--gold4); color: var(--gold); border: 1px solid var(--gold-border); }
+  .badge-green { @apply badge bg-[rgba(0,200,150,0.1)] text-[#00c896] border border-[rgba(0,200,150,0.22)]; }
+  .badge-blue  { @apply badge bg-[rgba(99,91,255,0.12)] text-[#8b84ff] border border-[rgba(99,91,255,0.22)]; }
+  .badge-red   { @apply badge bg-[rgba(255,107,107,0.1)] text-[#ff6b6b] border border-[rgba(255,107,107,0.22)]; }
+  .badge-gray  { @apply badge; background-color: var(--slate3); color: var(--slate); border: 1px solid var(--line2); }
 
-  /* ── Badges / Tags ── */
-  .badge {
-    @apply inline-flex items-center
-           px-2.5 py-[3px] rounded-[6px]
-           text-[11px] font-semibold tracking-[0.2px];
-  }
-
-  .badge-gold {
-    @apply badge;
-    background-color: var(--gold4);
-    color: var(--gold);
-    border: 1px solid var(--gold-border);
-  }
-
-  .badge-green {
-    @apply badge bg-[rgba(0,200,150,0.1)] text-[#00c896]
-           border border-[rgba(0,200,150,0.22)];
-  }
-
-  .badge-blue {
-    @apply badge bg-[rgba(99,91,255,0.12)] text-[#8b84ff]
-           border border-[rgba(99,91,255,0.22)];
-  }
-
-  .badge-red {
-    @apply badge bg-[rgba(255,107,107,0.1)] text-[#ff6b6b]
-           border border-[rgba(255,107,107,0.22)];
-  }
-
-  .badge-gray {
-    @apply badge;
-    background-color: var(--slate3);
-    color: var(--slate);
-    border: 1px solid var(--line2);
-  }
-
-  /* ── Skill tags ── */
   .skill-tag {
-    @apply inline-flex items-center
-           px-3 py-1 rounded-[7px] text-[11px] font-semibold
-           transition-colors duration-150;
-    background-color: var(--slate3);
-    color: var(--slate);
-    border: 1px solid var(--line);
+    @apply inline-flex items-center px-3 py-1 rounded-[7px] text-[11px] font-semibold transition-colors duration-150;
+    background-color: var(--slate3); color: var(--slate); border: 1px solid var(--line);
   }
 
-  /* ── Sidebar nav links ── */
   .sidebar-link {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-[10px]
-           text-sm font-medium transition-all duration-150 cursor-pointer;
-    color: var(--text-muted);
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-[10px] text-sm font-medium transition-all duration-150 cursor-pointer;
+    color: var(--sidebar-text);
   }
-  .sidebar-link:hover {
-    color: var(--text);
-    background-color: var(--line);
-  }
+  .sidebar-link:hover { color: var(--sidebar-text-hover); background-color: var(--sidebar-hover-bg); }
 
   .sidebar-link-active {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-[10px]
-           text-sm font-semibold;
-    color: var(--gold);
-    background-color: var(--gold4);
-    border: 1px solid var(--gold-border);
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-[10px] text-sm font-semibold;
+    color: var(--gold); background-color: var(--gold4); border: 1px solid var(--gold-border);
   }
 
-  /* ── Metric card (dashboard) ── */
-  .metric-card {
-    @apply rounded-[12px] p-4;
-    background-color: var(--ink3);
-    border: 1px solid var(--line);
-  }
+  .metric-card { @apply rounded-[12px] p-4; background-color: var(--ink3); border: 1px solid var(--line); }
+  .metric-label { @apply text-[10px] font-bold tracking-[0.1em] uppercase mb-2; color: var(--slate2); }
+  .metric-value { @apply text-[28px] font-extrabold tracking-[-0.04em] leading-none; color: var(--text); }
 
-  .metric-label {
-    @apply text-[10px] font-bold tracking-[0.1em] uppercase mb-2;
-    color: var(--slate2);
-  }
-
-  .metric-value {
-    @apply text-[28px] font-extrabold tracking-[-0.04em] leading-none;
-    color: var(--text);
-  }
-
-  /* ── Status badges ── */
-  .status-pending {
-    @apply badge;
-    background-color: var(--slate3);
-    color: var(--text-muted);
-    border: 1px solid var(--line2);
-  }
+  .status-pending    { @apply badge; background-color: var(--slate3); color: var(--text-muted); border: 1px solid var(--line2); }
   .status-reviewing  { @apply badge-blue; }
   .status-shortlisted{ @apply badge-gold; }
   .status-interviewed{ @apply badge bg-[rgba(167,139,250,0.12)] text-[#a78bfa] border border-[rgba(167,139,250,0.22)]; }
@@ -247,115 +194,42 @@ h1, h2, h3, h4 {
   .status-rejected   { @apply badge-red; }
   .status-withdrawn  { @apply badge-gray; }
 
-  /* ── Filter chip ── */
-  .chip {
-    @apply inline-flex items-center px-4 py-1.5 rounded-full
-           text-[12px] font-semibold
-           transition-all duration-150 cursor-pointer whitespace-nowrap;
-    border: 1px solid var(--line2);
-    color: var(--text-muted);
-  }
-  .chip:hover {
-    border-color: var(--gold-border);
-    color: var(--gold);
-  }
+  .chip { @apply inline-flex items-center px-4 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap; border: 1px solid var(--line2); color: var(--text-muted); }
+  .chip:hover { border-color: var(--gold-border); color: var(--gold); }
+  .chip-active { @apply chip; background-color: var(--gold4); border-color: var(--gold-border); color: var(--gold); }
 
-  .chip-active {
-    @apply chip;
-    background-color: var(--gold4);
-    border-color: var(--gold-border);
-    color: var(--gold);
-  }
-
-  /* ── Pipeline bar ── */
-  .pipe-bar {
-    @apply flex items-center gap-3 py-1.5;
-  }
+  .pipe-bar { @apply flex items-center gap-3 py-1.5; }
 }
 
 /* ── Animations ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeUp  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
+@keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(.85);} }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
+.animate-fade-up { animation: fadeUp  0.4s ease-out forwards; }
+.animate-fade-in { animation: fadeIn  0.3s ease-out forwards; }
+.stagger-1{animation-delay:.05s} .stagger-2{animation-delay:.10s}
+.stagger-3{animation-delay:.15s} .stagger-4{animation-delay:.20s} .stagger-5{animation-delay:.25s}
 
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.85); }
-}
-
-.animate-fade-up  { animation: fadeUp  0.4s ease-out forwards; }
-.animate-fade-in  { animation: fadeIn  0.3s ease-out forwards; }
-
-/* Stagger delays for lists */
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.10s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.20s; }
-.stagger-5 { animation-delay: 0.25s; }
-
-/* Skeleton shimmer */
 .skeleton {
   background: linear-gradient(90deg, var(--ink3) 25%, var(--ink4) 50%, var(--ink3) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   border-radius: 6px;
 }
+.pulse-dot { width:6px; height:6px; background:#00c896; border-radius:50%; animation:pulse-dot 2s ease-in-out infinite; }
 
-/* Pulse dot for "live" indicators */
-.pulse-dot {
-  width: 6px; height: 6px;
-  background: #00c896;
-  border-radius: 50%;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-/* Accent gradient text */
 .text-gradient {
   background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 50%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
+.divider { height:1px; background:var(--line); margin:0; }
+.section-heading { font-size:22px; font-weight:800; color:var(--text); letter-spacing:-0.03em; }
 
-/* Divider */
-.divider {
-  height: 1px;
-  background: var(--line);
-  margin: 0;
-}
-
-/* Section heading style */
-.section-heading {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: -0.03em;
-}
-
-/* Inline code */
 code {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.85em;
-  background: var(--ink3);
-  border: 1px solid var(--line2);
-  padding: 2px 6px;
-  border-radius: 5px;
-  color: var(--gold);
+  font-family:'DM Mono',monospace; font-size:.85em;
+  background:var(--ink3); border:1px solid var(--line2);
+  padding:2px 6px; border-radius:5px; color:var(--gold);
 }
-
-/* Focus ring — uses accent colour */
-*:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-}
+*:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }

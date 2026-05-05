@@ -18,14 +18,23 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401
+// Handle 401 — only log out when the token itself is invalid/expired,
+// NOT when a route rejects due to wrong password or bad input
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      const msg = err.response?.data?.error || '';
+      const isTokenError =
+        msg === 'Token expired' ||
+        msg === 'No token provided' ||
+        msg === 'Invalid token';
+
+      if (isTokenError) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(err);
   }

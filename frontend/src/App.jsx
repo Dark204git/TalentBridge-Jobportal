@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -11,6 +12,7 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import JobsPage from './pages/JobsPage';
 import JobDetailPage from './pages/JobDetailPage';
+import SettingsPage from './pages/Settings';
 
 // Employer Pages
 import EmployerDashboard from './pages/employer/Dashboard';
@@ -43,6 +45,7 @@ const PublicRoute = ({ children }) => {
 export default function App() {
   return (
     <BrowserRouter>
+      <ThemeProvider>
       <AuthProvider>
         <NotificationProvider>
             <Toaster
@@ -70,17 +73,20 @@ export default function App() {
               <Route path="/employer/applications" element={<ProtectedRoute role="employer"><EmployerApplications /></ProtectedRoute>} />
               <Route path="/employer/profile" element={<ProtectedRoute role="employer"><EmployerProfile /></ProtectedRoute>} />
               <Route path="/employer/analytics" element={<ProtectedRoute role="employer"><EmployerAnalytics /></ProtectedRoute>} />
+              <Route path="/employer/settings" element={<ProtectedRoute role="employer"><SettingsPage /></ProtectedRoute>} />
 
               {/* Candidate */}
               <Route path="/candidate" element={<ProtectedRoute role="candidate"><CandidateDashboard /></ProtectedRoute>} />
               <Route path="/candidate/profile" element={<ProtectedRoute role="candidate"><CandidateProfile /></ProtectedRoute>} />
               <Route path="/candidate/applications" element={<ProtectedRoute role="candidate"><CandidateApplications /></ProtectedRoute>} />
               <Route path="/candidate/saved" element={<ProtectedRoute role="candidate"><SavedJobs /></ProtectedRoute>} />
+              <Route path="/candidate/settings" element={<ProtectedRoute role="candidate"><SettingsPage /></ProtectedRoute>} />
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>         
         </NotificationProvider>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

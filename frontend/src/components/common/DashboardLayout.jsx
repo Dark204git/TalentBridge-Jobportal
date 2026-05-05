@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Briefcase, LayoutDashboard, FileText, BarChart3, User,
-  Bookmark, LogOut, Menu, X, Plus, ChevronDown
+  Bookmark, LogOut, Menu, X, Plus, ChevronDown, Settings
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import NotificationBell from './NotificationBell';
@@ -14,6 +14,7 @@ const employerLinks = [
   { href: '/employer/applications', label: 'Applications',  icon: FileText },
   { href: '/employer/analytics',    label: 'Analytics',     icon: BarChart3 },
   { href: '/employer/profile',      label: 'Company Profile', icon: User },
+  { href: '/employer/settings',     label: 'Settings',      icon: Settings },
 ];
 
 const candidateLinks = [
@@ -22,6 +23,7 @@ const candidateLinks = [
   { href: '/candidate/applications', label: 'My Applications', icon: FileText },
   { href: '/candidate/saved',        label: 'Saved Jobs',      icon: Bookmark },
   { href: '/candidate/profile',      label: 'My Profile',      icon: User },
+  { href: '/candidate/settings',     label: 'Settings',        icon: Settings },
 ];
 
 function SidebarContent({ onClose }) {

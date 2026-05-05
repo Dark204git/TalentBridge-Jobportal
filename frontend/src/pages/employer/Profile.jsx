@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Building2, Globe, Linkedin, Twitter, Save, Trash2, AlertTriangle, Loader, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Building2, Globe, Linkedin, Twitter, Save, Loader, User } from 'lucide-react';
 import DashboardLayout from '../../components/common/DashboardLayout';
-import { profilesAPI, authAPI } from '../../services/api';
+import { profilesAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -10,10 +10,7 @@ const INDUSTRIES = ['Technology', 'Finance', 'Healthcare', 'Education', 'Retail'
 const SIZES = ['1-10', '11-50', '51-200', '201-500', '501-1000', '1000+'];
 
 export default function EmployerProfile() {
-  const navigate        = useNavigate();
-  const { logout, user } = useAuth();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleting, setDeleting]               = useState(false);
+  const { user } = useAuth();
   const [form, setForm] = useState({
     company_name: '', company_description: '', industry: '',
     company_size: '', company_website: '', company_logo: '',
@@ -65,19 +62,6 @@ export default function EmployerProfile() {
       </div>
     </DashboardLayout>
   );
-
-  const handleDeleteAccount = async () => {
-    setDeleting(true);
-    try {
-      await authAPI.deleteAccount();
-      logout();
-      navigate('/');
-      toast.success('Your account has been deleted.');
-    } catch {
-      toast.error('Failed to delete account. Please try again.');
-      setDeleting(false);
-    }
-  };
 
   return (
     <DashboardLayout>
@@ -185,63 +169,20 @@ export default function EmployerProfile() {
           </div>
         </form>
 
-        {/* ── Danger Zone ── */}
-        <div className="card border border-red-500/20 bg-red-500/5 space-y-3 mb-8">
-          <h2 className="font-semibold text-red-400 flex items-center gap-2">
-            <AlertTriangle size={16} /> Danger Zone
-          </h2>
-          <p className="text-sm text-slate-400">
-            Permanently delete your account, all job postings, and associated data. This action cannot be undone.
-          </p>
-          <button
-            type="button"
-            onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-500/40 text-red-400 text-sm font-medium hover:bg-red-500/10 hover:border-red-500/60 transition-all"
+        {/* ── Settings Shortcut ── */}
+        <div className="card border border-white/[0.07] space-y-3 mb-8 flex items-center justify-between">
+          <div>
+            <p className="font-semibold text-white text-sm">Account Settings</p>
+            <p className="text-xs text-slate-400 mt-0.5">Reset password, change theme, or delete your account</p>
+          </div>
+          <Link
+            to="/employer/settings"
+            className="btn-secondary text-xs px-4 py-2 whitespace-nowrap"
           >
-            <Trash2 size={15} /> Delete Account
-          </button>
+            Go to Settings →
+          </Link>
         </div>
       </div>
-
-      {/* ── Delete Confirmation Modal ── */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="card w-full max-w-md space-y-5 border border-red-500/30">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-500/15 flex items-center justify-center flex-shrink-0">
-                <AlertTriangle size={20} className="text-red-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-white text-lg">Delete Account</h3>
-                <p className="text-xs text-slate-500">This cannot be undone</p>
-              </div>
-            </div>
-
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Are you sure you want to permanently delete your employer account? All your
-              job postings and candidate applications will be{' '}
-              <span className="text-red-400 font-medium">deleted forever</span>.
-            </p>
-
-            <div className="flex gap-3 pt-1">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                disabled={deleting}
-                className="flex-1 px-4 py-2.5 rounded-lg border border-dark-300 text-slate-300 text-sm font-medium hover:border-dark-200 hover:text-white transition-all disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteAccount}
-                disabled={deleting}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-red-500/15 border border-red-500/40 text-red-400 text-sm font-medium hover:bg-red-500/25 hover:border-red-500/60 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {deleting ? <><Loader size={14} className="animate-spin" /> Deleting...</> : <><Trash2 size={14} /> Yes, Delete</>}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </DashboardLayout>
   );
 }

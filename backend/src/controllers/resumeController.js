@@ -25,7 +25,8 @@ export const confirmResumeUpload = async (req, res) => {
   try {
     const { resume_url, filename } = req.body;
 
-  
+    // ── FIX: explicitly reset resume_parsed to FALSE so the poll
+    //    doesn't immediately see stale "true" from the previous resume
     await supabase
       .from('candidate_profiles')
       .update({

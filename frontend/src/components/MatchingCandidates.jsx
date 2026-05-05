@@ -28,21 +28,22 @@ function ScoreRing({ score }) {
   );
 }
 
-
+// FIX: accept defaultOpen and jobTitle as props
 export default function MatchingCandidates({ jobId, jobTitle, defaultOpen = false }) {
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState(null);
-
+  // FIX: use defaultOpen so it starts expanded when the parent wants it to
   const [open, setOpen]             = useState(defaultOpen);
 
   useEffect(() => {
     if (!jobId) return;
 
-  
+    // FIX: whenever jobId changes, reset candidates and re-fetch if open
     setCandidates([]);
     setError(null);
 
+    // FIX: also auto-open when jobId changes so results are immediately visible
     setOpen(true);
   }, [jobId]);
 
@@ -76,7 +77,7 @@ export default function MatchingCandidates({ jobId, jobTitle, defaultOpen = fals
 
   return (
     <div className="card">
-      //Header 
+      {/* Header */}
       <div className="flex items-center justify-between">
         <button
           onClick={() => setOpen(o => !o)}
@@ -99,7 +100,7 @@ export default function MatchingCandidates({ jobId, jobTitle, defaultOpen = fals
         </button>
 
         <div className="flex items-center gap-2">
-          //Refresh button 
+          {/* Refresh button */}
           <button
             onClick={handleRefresh}
             disabled={loading}
@@ -115,7 +116,7 @@ export default function MatchingCandidates({ jobId, jobTitle, defaultOpen = fals
       {open && (
         <div className="mt-4">
 
-          //Embedding not ready yet 
+          {/* Embedding not ready yet */}
           {error?.includes('not generated') && (
             <div className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300">
               <AlertCircle size={13} className="mt-0.5 flex-shrink-0" />
@@ -123,7 +124,7 @@ export default function MatchingCandidates({ jobId, jobTitle, defaultOpen = fals
             </div>
           )}
 
-         
+          {/* Generic error */}
           {error && !error.includes('not generated') && (
             <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400">
               <AlertCircle size={13} className="mt-0.5 flex-shrink-0" />
@@ -131,7 +132,7 @@ export default function MatchingCandidates({ jobId, jobTitle, defaultOpen = fals
             </div>
           )}
 
-          //Loading skeletons 
+          {/* Loading skeletons */}
           {loading && (
             <div className="space-y-3">
               {[...Array(4)].map((_, i) => (
@@ -146,7 +147,7 @@ export default function MatchingCandidates({ jobId, jobTitle, defaultOpen = fals
             </div>
           )}
 
-          //Candidate list 
+          {/* Candidate list */}
           {!loading && !error && candidates.length > 0 && (
             <div className="space-y-2">
               {candidates.map(c => (
@@ -200,7 +201,7 @@ export default function MatchingCandidates({ jobId, jobTitle, defaultOpen = fals
             </div>
           )}
 
-          //Empty state 
+          {/* Empty state */}
           {!loading && !error && candidates.length === 0 && (
             <div className="text-center py-8">
               <Users size={28} className="text-slate-600 mx-auto mb-2" />

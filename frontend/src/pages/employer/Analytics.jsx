@@ -6,13 +6,13 @@ import { Eye, Clock, TrendingUp, Star } from 'lucide-react';
 import DashboardLayout from '../../components/common/DashboardLayout';
 import { analyticsAPI } from '../../services/api';
 
-//helpers
+/* ── helpers ── */
 const FUNNEL_COLORS = ['#64748b', '#3b82f6', '#f0c040', '#8b5cf6', '#10b981'];
 
 const scoreColor = (s) =>
   s >= 80 ? '#10b981' : s >= 60 ? '#f0c040' : s >= 40 ? '#3b82f6' : '#64748b';
 
-// KPI card 
+/* ── KPI card ── */
 function KpiCard({ icon: Icon, label, value, sub }) {
   return (
     <div className="card">
@@ -28,7 +28,7 @@ function KpiCard({ icon: Icon, label, value, sub }) {
   );
 }
 
-// Recharts custom tooltip 
+/* ── Recharts custom tooltip ── */
 function ChartTooltip({ active, payload, label, unit = 'applications' }) {
   if (!active || !payload?.length) return null;
   return (
@@ -44,7 +44,7 @@ function ChartTooltip({ active, payload, label, unit = 'applications' }) {
   );
 }
 
-/*Section card wrapper*/
+/* ── Section card wrapper ── */
 function SectionCard({ title, subtitle, children }) {
   return (
     <div className="card">
@@ -77,7 +77,7 @@ export default function EmployerAnalytics() {
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
 
-        //Page title 
+        {/* Page title */}
         <div>
           <h1 className="text-3xl font-bold" style={{ color: 'var(--text)' }}>Analytics</h1>
           <p className="mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>Hiring performance over time</p>
@@ -89,7 +89,7 @@ export default function EmployerAnalytics() {
           </div>
         ) : (
           <>
-            //KPI row 
+            {/* KPI row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <KpiCard icon={Eye}        label="Total Views"       value={kpis.totalViews?.toLocaleString()} sub="across all job posts" />
               <KpiCard icon={Clock}      label="Avg. Time to Hire" value={kpis.avgTimeToHire != null ? `${kpis.avgTimeToHire}d` : null} sub="applied → offered" />
@@ -99,7 +99,7 @@ export default function EmployerAnalytics() {
 
             <div className="grid lg:grid-cols-2 gap-6">
 
-              //Weekly trend bar chart 
+              {/* Weekly trend bar chart */}
               <SectionCard title="Weekly Applications">
                 {weeklyTrend.length > 0 ? (
                   <ResponsiveContainer width="100%" height={220}>
@@ -123,7 +123,7 @@ export default function EmployerAnalytics() {
                 )}
               </SectionCard>
 
-              //Hiring funnel 
+              {/* Hiring funnel */}
               <SectionCard title="Hiring Funnel">
                 {funnel.some(f => f.count > 0) ? (
                   <div className="space-y-3">
@@ -159,7 +159,7 @@ export default function EmployerAnalytics() {
               </SectionCard>
             </div>
 
-            //Match score distribution 
+            {/* Match score distribution */}
             <SectionCard title="Match Score Distribution" subtitle="How well applicants match your job requirements">
               {scoreDist.some(b => b.count > 0) ? (
                 <div className="grid grid-cols-4 gap-3">
@@ -191,7 +191,7 @@ export default function EmployerAnalytics() {
               )}
             </SectionCard>
 
-            //Job performance table 
+            {/* Job performance table */}
             <SectionCard title="Job Performance">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">

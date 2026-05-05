@@ -57,7 +57,7 @@ export const optionalAuth = async (req, res, next) => {
 
     if (user) req.user = user;
   } catch {
-    // Silently ignore invalid/expired token 
+    // Silently ignore invalid/expired token — this is optional auth
   }
   next();
 };

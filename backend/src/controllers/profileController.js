@@ -34,6 +34,7 @@ export const updateCandidateProfile = async (req, res) => {
       headline, bio, skills, experience_years, education,
       experience, desired_salary, preferred_location, desired_job_title,
       linkedin_url, github_url, portfolio_url, is_open_to_work,
+      // New fields
       phone_number, date_of_birth, gender, lives_in,
       preferred_category,
       preferred_job_type,

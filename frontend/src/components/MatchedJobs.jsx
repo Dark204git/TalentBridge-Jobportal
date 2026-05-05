@@ -1,3 +1,14 @@
+/**
+ * MatchedJobs.jsx
+ *
+ * Drop this component into the Candidate Dashboard to show
+ * AI-ranked job recommendations with match score badges.
+ *
+ * Usage in Dashboard.jsx:
+ *   import MatchedJobs from '../../components/candidate/MatchedJobs';
+ *   <MatchedJobs />
+ */
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, MapPin, DollarSign, RefreshCw, AlertCircle } from 'lucide-react';
@@ -25,7 +36,7 @@ function ScoreBadge({ score }) {
 
 // SVG donut chart showing match percentage
 function MatchDonut({ score }) {
-
+  // Show a grey pending ring when score is null (keyword fallback / no embedding yet)
   const size   = 48;
   const stroke = 4.5;
   const r      = (size - stroke) / 2;
@@ -44,18 +55,18 @@ function MatchDonut({ score }) {
 
   return (
     <div className="flex flex-col items-center gap-0.5 flex-shrink-0" title={score == null ? 'Upload resume for a match score' : `${score}% match`}>
-    
+      {/* Two layered SVGs: one rotated for the arc, one upright for text */}
       <div className="relative" style={{ width: size, height: size }}>
-       
+        {/* Arc layer — rotated -90deg so arc starts at top */}
         <svg
           width={size} height={size}
           viewBox={`0 0 ${size} ${size}`}
           style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}
         >
-          
+          {/* Track */}
           <circle cx={size/2} cy={size/2} r={r}
             fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={stroke} />
-          
+          {/* Fill arc */}
           <circle cx={size/2} cy={size/2} r={r}
             fill="none"
             stroke={color}
@@ -65,7 +76,7 @@ function MatchDonut({ score }) {
             style={{ transition: 'stroke-dasharray 0.7s ease' }}
           />
         </svg>
-    
+        {/* Text layer — NOT rotated, sits on top */}
         <svg
           width={size} height={size}
           viewBox={`0 0 ${size} ${size}`}
@@ -100,7 +111,7 @@ export default function MatchedJobs({ onMatchCount } = {}) {
     setLoading(true);
     try {
       const { data } = await api.get('/matching/jobs-for-me?limit=15');
-     
+      // Filter client-side: only show jobs at or above DISPLAY_MIN_SCORE
       const matched = (data.jobs || []).filter(j => j.match_score >= DISPLAY_MIN_SCORE);
       setJobs(matched);
       setHasE(matched.length > 0 || true);
@@ -131,7 +142,7 @@ export default function MatchedJobs({ onMatchCount } = {}) {
 
   return (
     <div className="card">
-      //Header 
+      {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-brand-500/15 border border-brand-500/30 rounded-lg grid place-items-center">
@@ -154,7 +165,7 @@ export default function MatchedJobs({ onMatchCount } = {}) {
         </div>
       </div>
 
-      //No embedding state 
+      {/* No embedding state */}
       {!hasEmbedding && !loading && (
         <div className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
           <AlertCircle size={16} className="text-amber-400 flex-shrink-0 mt-0.5" />
@@ -169,7 +180,7 @@ export default function MatchedJobs({ onMatchCount } = {}) {
         </div>
       )}
 
-      //Loading skeletons 
+      {/* Loading skeletons */}
       {loading && (
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
@@ -185,7 +196,7 @@ export default function MatchedJobs({ onMatchCount } = {}) {
         </div>
       )}
 
-      //Job list 
+      {/* Job list */}
       {!loading && jobs.length > 0 && (
         <div className="space-y-2">
           {jobs.map((job) => (
@@ -194,7 +205,7 @@ export default function MatchedJobs({ onMatchCount } = {}) {
               to={`/jobs/${job.id}`}
               className="flex items-center gap-3 p-3 bg-dark-600 hover:bg-dark-500 rounded-xl transition-colors group"
             >
-              //Company logo 
+              {/* Company logo */}
               <div className="w-10 h-10 bg-dark-400 border border-dark-300 rounded-xl grid place-items-center text-sm font-bold text-brand-400 flex-shrink-0">
                 {job.employer_profiles?.company_logo
                   ? <img src={job.employer_profiles.company_logo} alt="" className="w-full h-full object-cover rounded-xl" />
@@ -202,7 +213,7 @@ export default function MatchedJobs({ onMatchCount } = {}) {
                 }
               </div>
 
-              //Info 
+              {/* Info */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-white group-hover:text-brand-400 transition-colors truncate">
                   {job.title}
@@ -227,14 +238,14 @@ export default function MatchedJobs({ onMatchCount } = {}) {
                 </div>
               </div>
 
-              //Match donut chart 
+              {/* Match donut chart */}
               <MatchDonut score={job.match_score} />
             </Link>
           ))}
         </div>
       )}
 
-      //Empty state 
+      {/* Empty state */}
       {!loading && jobs.length === 0 && hasEmbedding && (
         <div className="text-center py-8">
           <p className="text-3xl mb-2">🎯</p>

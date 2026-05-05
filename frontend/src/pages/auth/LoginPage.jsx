@@ -108,7 +108,7 @@ export function RegisterPage() {
 
   return (
     <AuthLayout title="Create your account" subtitle="Join thousands of professionals">
-      //Role Selector 
+      {/* Role Selector */}
       <div className="grid grid-cols-2 gap-3 mb-6">
         {['candidate', 'employer'].map((role) => (
           <button

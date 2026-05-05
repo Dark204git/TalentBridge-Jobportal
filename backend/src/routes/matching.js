@@ -1,3 +1,11 @@
+/**
+ * matching.js routes
+ *
+ * GET  /api/matching/jobs-for-me          — Candidate: AI-matched jobs
+ * POST /api/matching/re-embed-me          — Candidate: force re-embed profile
+ * POST /api/matching/re-embed-job/:id     — Admin: force re-embed a job
+ * GET  /api/matching/debug                — Candidate: inspect embedding health
+ */
 
 import express from 'express';
 import { authenticate, requireCandidate, requireRole } from '../middleware/auth.js';
@@ -15,7 +23,7 @@ import { cosineSimilarity, similarityToPercent } from '../services/embeddingServ
 
 const router = express.Router();
 
-//Helper: parse embedding string to number[]  
+// ── Helper: parse embedding string to number[] (same as matchingService) ──────
 function parseEmbedding(raw) {
   if (!raw) return null;
   if (Array.isArray(raw)) return raw;
@@ -23,7 +31,7 @@ function parseEmbedding(raw) {
   return null;
 }
 
-//Candidate: get AI-matched jobs ─
+// ── Candidate: get AI-matched jobs ────────────────────────────────────────────
 router.get('/jobs-for-me', authenticate, requireCandidate, async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit || '15'), 15);
@@ -35,7 +43,10 @@ router.get('/jobs-for-me', authenticate, requireCandidate, async (req, res) => {
   }
 });
 
-
+// ── Candidate: raw score dump for every active job (debug only) ───────────────
+// GET /api/matching/debug-scores
+// Shows every job's raw cosine similarity AND composite score before any filtering.
+// Use this to diagnose why low-score jobs aren't appearing.
 router.get('/debug-scores', authenticate, requireCandidate, async (req, res) => {
   try {
     const { data: profile } = await supabase
@@ -99,7 +110,7 @@ router.get('/debug-scores', authenticate, requireCandidate, async (req, res) => 
   }
 });
 
-//Candidate: force re-embed their own profile ──
+// ── Candidate: force re-embed their own profile ───────────────────────────────
 router.post('/re-embed-me', authenticate, requireCandidate, async (req, res) => {
   try {
     await reEmbedCandidate(req.user.id);
@@ -110,7 +121,7 @@ router.post('/re-embed-me', authenticate, requireCandidate, async (req, res) => 
   }
 });
 
-//Admin: force re-embed a job )─
+// ── Admin: force re-embed a job ───────────────────────────────────────────────
 router.post('/re-embed-job/:id', authenticate, requireRole('admin'), async (req, res) => {
   try {
     await reEmbedJob(req.params.id);
@@ -121,7 +132,7 @@ router.post('/re-embed-job/:id', authenticate, requireRole('admin'), async (req,
   }
 });
 
-//Candidate: get match score for a specific job 
+// ── Candidate: get match score for a specific job ─────────────────────────────
 router.get('/score/:jobId', authenticate, requireCandidate, async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -157,7 +168,7 @@ router.get('/score/:jobId', authenticate, requireCandidate, async (req, res) => 
   }
 });
 
-//Re-embed ALL active jobs ()
+// ── Re-embed ALL active jobs (call once after schema migration) ───────────────
 router.post('/re-embed-all-jobs', authenticate, async (req, res) => {
   try {
     const { reEmbedJob } = await import('../services/matchingService.js');
@@ -184,6 +195,10 @@ router.post('/re-embed-all-jobs', authenticate, async (req, res) => {
   }
 });
 
+// ── Debug: inspect embedding health + composite scoring for the current candidate
+// GET /api/matching/debug
+// Returns embedding health, RPC test result, hard-filter status, and
+// composite score breakdowns for a sample of jobs.
 router.get('/debug', authenticate, requireCandidate, async (req, res) => {
   try {
     const { data: profile } = await supabase
@@ -210,14 +225,14 @@ router.get('/debug', authenticate, requireCandidate, async (req, res) => {
     if (candidateEmbedding) {
       const { data, error } = await supabase.rpc('match_jobs_for_candidate', {
         query_embedding: candidateEmbedding,
-        match_threshold: 0.0,  
+        match_threshold: 0.0,   // 0 threshold — return anything
         match_count: 3,
       });
       rpcResult = data?.length ?? 0;
       rpcError  = error?.message ?? null;
     }
 
-    // Compute composite scores for a sample of jobs 
+    // Compute composite scores for a sample of jobs (with hard-filter annotations)
     let sampleScores = [];
     if (candidateEmbedding) {
       const { data: sampleJobs } = await supabase

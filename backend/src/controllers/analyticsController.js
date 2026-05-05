@@ -1,12 +1,12 @@
 import { supabase } from '../config/supabase.js';
 
-//Employer Dashboard — action-focused, "what needs attention today" 
+// ── Employer Dashboard — action-focused, "what needs attention today" ─────────
 export const getEmployerDashboard = async (req, res) => {
   try {
     const employerId = req.user.id;
     const now        = new Date();
 
-    //Summary counts ─
+    // ── Summary counts ────────────────────────────────────────────────────────
     const [
       { count: totalJobs },
       { count: activeJobs },
@@ -58,7 +58,7 @@ export const getEmployerDashboard = async (req, res) => {
       .lte('application_deadline', in7Days.toISOString())
       .order('application_deadline', { ascending: true });
 
-    // Recent jobs last 5 with application counts
+    // Recent jobs (last 5) with application counts
     const { data: recentJobs } = await supabase
       .from('jobs')
       .select('id, title, views, created_at, status, application_deadline')
@@ -86,12 +86,12 @@ export const getEmployerDashboard = async (req, res) => {
   }
 };
 
-//Employer Analytics - -
+// ── Employer Analytics — performance-focused, historical depth ────────────────
 export const getEmployerAnalytics = async (req, res) => {
   try {
     const employerId = req.user.id;
 
-    //Performance KPIs 
+    // ── Performance KPIs ──────────────────────────────────────────────────────
     const { data: viewData } = await supabase
       .from('jobs').select('views').eq('employer_id', employerId);
     const totalViews = (viewData || []).reduce((sum, j) => sum + (j.views || 0), 0);
@@ -112,7 +112,7 @@ export const getEmployerAnalytics = async (req, res) => {
       avgTimeToHire = Math.round(totalDays / offeredApps.length);
     }
 
-    // Offer acceptance rate: offered 
+    // Offer acceptance rate: offered / (offered + rejected after interview)
     const { data: allApps } = await supabase
       .from('applications').select('status, match_score').eq('employer_id', employerId);
 
@@ -126,7 +126,7 @@ export const getEmployerAnalytics = async (req, res) => {
       ? Math.round(scored.reduce((s, a) => s + a.match_score, 0) / scored.length)
       : null;
 
-    //Weekly application trend (last 8 weeks, real date labels) 
+    // ── Weekly application trend (last 8 weeks, real date labels) ────────────
     const weeklyTrend = [];
     for (let i = 7; i >= 0; i--) {
       const start = new Date();
@@ -148,7 +148,7 @@ export const getEmployerAnalytics = async (req, res) => {
       weeklyTrend.push({ week: label, applications: count || 0 });
     }
 
-    //Application funnel 
+    // ── Application funnel ────────────────────────────────────────────────────
     const FUNNEL_ORDER = ['pending', 'reviewing', 'shortlisted', 'interviewed', 'offered'];
     const statusCounts = (allApps || []).reduce((acc, { status }) => {
       acc[status] = (acc[status] || 0) + 1; return acc;
@@ -160,7 +160,7 @@ export const getEmployerAnalytics = async (req, res) => {
       pct:   Math.round(((statusCounts[stage] || 0) / total) * 100),
     }));
 
-    //Match score distribution 
+    // ── Match score distribution ──────────────────────────────────────────────
     const buckets = { '0–30': 0, '31–60': 0, '61–80': 0, '81–100': 0 };
     for (const { match_score } of (allApps || [])) {
       if (match_score == null) continue;
@@ -171,7 +171,7 @@ export const getEmployerAnalytics = async (req, res) => {
     }
     const scoreDistribution = Object.entries(buckets).map(([range, count]) => ({ range, count }));
 
-    //Job performance 
+    // ── Job performance (all jobs, not just last 5) ───────────────────────────
     const { data: allJobs } = await supabase
       .from('jobs')
       .select('id, title, views, created_at, status, application_deadline')
@@ -234,8 +234,8 @@ export const getCandidateAnalytics = async (req, res) => {
       .eq('user_id', candidateId)
       .single();
 
-    //Profile strength calculation 
-
+    // ── Profile strength calculation ──────────────────────────────────────────
+    // Each item has a weight — total possible = 100
     const strengthItems = [
       { label: 'Profile Photo',     done: !!profile?.profile_picture,                                       pts: 10 },
       { label: 'Headline',          done: !!profile?.headline,                                              pts: 10 },

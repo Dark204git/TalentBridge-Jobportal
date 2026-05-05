@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-
+// Cloudflare R2 compatible with AWS S3 SDK
+// Install: npm install @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
 
 export const generateR2PresignedUrl = async (key, contentType) => {
   try {
-  
+    // Dynamic import to avoid issues if AWS SDK not installed
     const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
     const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
 

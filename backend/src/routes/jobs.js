@@ -1,3 +1,9 @@
+/**
+ * jobs.js routes  (UPDATED)
+ *
+ * New route added:
+ *   GET /api/jobs/:id/matching-candidates  — AI-ranked candidates for a job
+ */
 
 import express from 'express';
 import {

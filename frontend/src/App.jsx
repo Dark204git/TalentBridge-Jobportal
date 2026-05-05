@@ -56,7 +56,7 @@ export default function App() {
               }}
             />
             <Routes>
-              //Public 
+              {/* Public */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/jobs" element={<JobsPage />} />
               <Route path="/jobs/:id" element={<JobDetailPage />} />
@@ -65,7 +65,7 @@ export default function App() {
               <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
               <Route path="/reset-password" element={<PublicRoute><ResetPasswordPage /></PublicRoute>} />
 
-              //Employer 
+              {/* Employer */}
               <Route path="/employer" element={<ProtectedRoute role="employer"><EmployerDashboard /></ProtectedRoute>} />
               <Route path="/employer/jobs" element={<ProtectedRoute role="employer"><EmployerJobs /></ProtectedRoute>} />
               <Route path="/employer/jobs/new" element={<ProtectedRoute role="employer"><PostJob /></ProtectedRoute>} />
@@ -75,7 +75,7 @@ export default function App() {
               <Route path="/employer/analytics" element={<ProtectedRoute role="employer"><EmployerAnalytics /></ProtectedRoute>} />
               <Route path="/employer/settings" element={<ProtectedRoute role="employer"><SettingsPage /></ProtectedRoute>} />
 
-              //Candidate 
+              {/* Candidate */}
               <Route path="/candidate" element={<ProtectedRoute role="candidate"><CandidateDashboard /></ProtectedRoute>} />
               <Route path="/candidate/profile" element={<ProtectedRoute role="candidate"><CandidateProfile /></ProtectedRoute>} />
               <Route path="/candidate/applications" element={<ProtectedRoute role="candidate"><CandidateApplications /></ProtectedRoute>} />

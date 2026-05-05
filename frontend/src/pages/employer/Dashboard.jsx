@@ -63,7 +63,7 @@ export default function EmployerDashboard() {
     <DashboardLayout>
       <div className="space-y-8 animate-fade-in">
 
-        //Header 
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-display text-3xl font-bold text-white">Dashboard</h1>
@@ -74,7 +74,7 @@ export default function EmployerDashboard() {
           </Link>
         </div>
 
-        //Stat cards 
+        {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard icon={Briefcase} label="Total Jobs"         value={summary.totalJobs}         color="brand" />
           <StatCard icon={Briefcase} label="Active Jobs"        value={summary.activeJobs}        color="green" />
@@ -89,7 +89,7 @@ export default function EmployerDashboard() {
           />
         </div>
 
-        //Urgent Actions banner 
+        {/* Urgent Actions banner */}
         {!loading && hasUrgent && (
           <div className="card border border-amber-500/30 bg-amber-500/5">
             <div className="flex items-center gap-2 mb-4">
@@ -141,7 +141,7 @@ export default function EmployerDashboard() {
         )}
 
         <div className="grid lg:grid-cols-2 gap-6">
-          //Applications by status 
+          {/* Applications by status */}
           <div className="card">
             <h2 className="font-semibold text-white mb-5">Applications by Status</h2>
             {loading ? (
@@ -173,7 +173,7 @@ export default function EmployerDashboard() {
             )}
           </div>
 
-          //Recent jobs 
+          {/* Recent jobs */}
           <div className="card">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-semibold text-white">Recent Jobs</h2>

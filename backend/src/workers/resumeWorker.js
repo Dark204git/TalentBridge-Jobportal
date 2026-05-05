@@ -22,7 +22,7 @@ const workerConnection = {
   }),
 };
 
-//Text fetcher ─
+// ── Text fetcher ──────────────────────────────────────────────────────────────
 const fetchBuffer = (url) =>
   new Promise((resolve, reject) => {
     const client = url.startsWith('https') ? https : http;
@@ -34,8 +34,12 @@ const fetchBuffer = (url) =>
     }).on('error', reject);
   });
 
-//Gemini resume parser ──
+// ── Gemini resume parser ──────────────────────────────────────────────────────
+// Primary parser — sends resume text to Gemini 1.5 Flash and gets back
+// a structured JSON object. All existing regex functions below are used
+// as a fallback if Gemini fails (rate limit, missing key, network error).
 
+// Model priority: try flash-lite first (higher free quota), fall back to flash
 const GEMINI_MODELS = [ 
   'gemini-2.5-flash',   
   'gemini-2.5-flash-lite',  
@@ -130,7 +134,7 @@ async function parseWithGemini(resumeText) {
         signal: AbortSignal.timeout(30_000),
       });
 
-   
+      // 429 = quota hit on this model → try next model
       if (response.status === 429) {
         console.warn(`  ⚠️  ${model} quota exceeded, trying next model…`);
         lastError = new Error(`${model} quota exceeded (429)`);
@@ -165,7 +169,8 @@ async function parseWithGemini(resumeText) {
   throw lastError || new Error('All Gemini models exhausted');
 }
 
-
+// Maps the new structured JSON from Gemini to the existing DB column names,
+// enforcing correct types for every field along the way.
 function sanitiseGeminiOutput(parsed) {
   const p = parsed || {};
   const professional = p.professional || {};
@@ -241,8 +246,9 @@ function sanitiseGeminiOutput(parsed) {
   };
 }
 
-//Section splitter 
-
+// ── Section splitter ──────────────────────────────────────────────────────────
+// Splits raw resume text into named buckets by detecting common headers.
+// All extractors below operate on these buckets for higher accuracy.
 const splitIntoSections = (text) => {
   const knownHeaders = [
     'summary','objective','profile','about me','about','overview','bio',
@@ -302,7 +308,7 @@ const getSection = (sections, ...keywords) => {
   return key ? sections[key] : '';
 };
 
-//1. Skills ─
+// ── 1. Skills ─────────────────────────────────────────────────────────────────
 const SKILL_KEYWORDS = [
   // Languages
   'JavaScript','TypeScript','Python','Java','C++','C#','C','Go','Golang','Rust',
@@ -411,7 +417,7 @@ function parseSkills(text, sections) {
   )];
 }
 
-//2. Expected salary ─
+// ── 2. Expected salary ────────────────────────────────────────────────────────
 function parseExpectedSalary(text) {
   const patterns = [
     // Explicit label patterns (highest confidence)
@@ -459,7 +465,7 @@ function parseExpectedSalary(text) {
   return null;
 }
 
-//3. Social / portfolio links ─
+// ── 3. Social / portfolio links ───────────────────────────────────────────────
 function parseSocialLinks(text) {
   // Search header area first (most links appear there), then full text
   const searchText = text.slice(0, 4000);
@@ -505,7 +511,7 @@ function parseSocialLinks(text) {
   };
 }
 
-//4. Headline ──
+// ── 4. Headline ───────────────────────────────────────────────────────────────
 function parseHeadline(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const rolePattern =
@@ -529,7 +535,7 @@ function parseHeadline(text) {
   return null;
 }
 
-//5. Experience years 
+// ── 5. Experience years ───────────────────────────────────────────────────────
 function parseExperienceYears(text, workEntries = []) {
   const patterns = [
     // "5+ years of experience", "5 years professional experience"
@@ -584,7 +590,7 @@ function parseExperienceYears(text, workEntries = []) {
   return null;
 }
 
-//6. Desired job title ──
+// ── 6. Desired job title ──────────────────────────────────────────────────────
 function parseDesiredJobTitle(text) {
   const patterns = [
     // Explicit preference statements
@@ -618,7 +624,7 @@ function parseDesiredJobTitle(text) {
   return null;
 }
 
-//7. Preferred location ─
+// ── 7. Preferred location ─────────────────────────────────────────────────────
 function parsePreferredLocation(text) {
   const explicit = [
     // Explicit preference labels
@@ -664,7 +670,7 @@ function parsePreferredLocation(text) {
   return (cityCountry || cityState) ? (cityCountry || cityState)[0] : null;
 }
 
-//8. Bio ──
+// ── 8. Bio ────────────────────────────────────────────────────────────────────
 function parseBio(text, sections) {
   const bioSection = getSection(sections,
     'summary','objective','profile','about','overview','bio','professional summary','career summary'
@@ -677,7 +683,7 @@ function parseBio(text, sections) {
   return paras[0] || null;
 }
 
-//9. Work experience — company names + titles + durations ─
+// ── 9. Work experience — company names + titles + durations ───────────────────
 function parseWorkExperience(sections) {
   const expText = getSection(sections,
     'experience','employment','work history','professional experience','career history'
@@ -738,7 +744,7 @@ function parseWorkExperience(sections) {
     .slice(0, 10);
 }
 
-//10. Education — degrees + institutions ─
+// ── 10. Education — degrees + institutions ────────────────────────────────────
 function parseEducation(sections) {
   const eduText = getSection(sections, 'education', 'academic', 'qualifications');
   if (!eduText) return [];
@@ -775,7 +781,7 @@ function parseEducation(sections) {
   return entries.filter(e => e.degree || e.institution).slice(0, 5);
 }
 
-//Worker ──
+// ── Worker ────────────────────────────────────────────────────────────────────
 const worker = new Worker(
   'resume-parsing',
   async (job) => {
@@ -783,7 +789,7 @@ const worker = new Worker(
     console.log(`\n📄 Processing resume for user ${user_id}`);
 
     try {
-      //Step 1: Parse text from file ──
+      // ── Step 1: Parse text from file ────────────────────────────────────────
       let text = '';
 
       if (resume_url && !resume_url.includes('mock')) {
@@ -812,8 +818,8 @@ const worker = new Worker(
 
       console.log(`  Extracted ${text.length} chars from resume`);
 
-      //Step 2: Extract structured data ──
-      // Try Gemini first. If it fails, fall back to regex.
+      // ── Step 2: Extract structured data ─────────────────────────────────────
+      // Try Gemini first. If it fails (no key, rate limit, network), fall back to regex.
       let geminiResult = null;
       try {
         console.log('  🤖 Attempting Gemini parsing…');
@@ -833,13 +839,13 @@ const worker = new Worker(
       const portfolio_url     = geminiResult?.portfolio_url        ?? parseSocialLinks(text).portfolio_url;
       const headline          = geminiResult?.headline             ?? parseHeadline(text);
       const experienceYears   = geminiResult?.experience_years     ?? parseExperienceYears(text, workEntriesRaw);
-     
+      // If no explicit desired job title found, fall back to the current headline/job title
       const desiredJobTitle   = geminiResult?.desired_job_title    ?? parseDesiredJobTitle(text) ?? headline;
       const preferredLocation = geminiResult?.preferred_location   ?? parsePreferredLocation(text);
       const bio               = geminiResult?.bio                  ?? parseBio(text, sections);
       const educationEntries  = geminiResult?.education?.length    ? geminiResult.education    : parseEducation(sections);
       const workEntries       = geminiResult?.experience?.length   ? geminiResult.experience   : workEntriesRaw;
-     
+      // New fields — Gemini primary, regex fallback for phone + salary
       // Normalise any date format Gemini returns → ISO YYYY-MM-DD for Postgres DATE column
       const normaliseDOB = (raw) => {
         if (!raw) return null;
@@ -950,7 +956,7 @@ const worker = new Worker(
       const usedGemini = geminiResult !== null;
       console.log(`  Parser: ${usedGemini ? 'Gemini ✨' : 'Regex fallback'} | Skills: ${skills.length} | Exp: ${experienceYears ?? 'n/a'} yrs | Jobs: ${workEntries.length} | Education: ${educationEntries.length}`);
 
-      //Step 3: Save parsed data to DB 
+      // ── Step 3: Save parsed data to DB ──────────────────────────────────────
       const updates = {
         resume_parsed:       true,
         resume_parsed_at:    new Date().toISOString(),
@@ -1001,8 +1007,9 @@ const worker = new Worker(
 
       console.log(`✅ Resume fully processed for user ${user_id}`);
 
-      //Step 4: Generate embedding + run vector matching ──
-
+      // ── Step 4: Generate embedding + run vector matching ────────────────────
+      // Run in a separate try/catch so a failed embedding NEVER rolls back
+      // the successful parse above. resume_parsed stays true regardless.
       try {
         console.log('  🧠 Generating AI embedding …');
         await triggerCandidateMatchOnResume(user_id, updatedProfile);

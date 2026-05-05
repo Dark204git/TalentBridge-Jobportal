@@ -21,9 +21,9 @@ export const NotificationProvider = ({ children }) => {
       setNotifications(data.notifications  ?? []);
       setUnreadCount(data.unread_count     ?? 0);
     } catch {
-      
+      // silently fail
     }
-  }, [userId]);                                   
+  }, [userId]);                                   // only re-create when the actual user id changes
 
   useEffect(() => {
     if (!userId) {

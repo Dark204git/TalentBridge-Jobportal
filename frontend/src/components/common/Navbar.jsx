@@ -61,7 +61,7 @@ export default function Navbar() {
         borderBottom: '1px solid var(--topbar-border)',
       }}>
 
-      //Logo 
+      {/* Logo */}
       <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
         <div className="w-[30px] h-[30px] rounded-[7px] grid place-items-center"
           style={{ background: 'var(--gold)' }}>
@@ -73,7 +73,7 @@ export default function Navbar() {
         </span>
       </Link>
 
-      //Desktop nav links 
+      {/* Desktop nav links */}
       <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
         {navLinks.map(({ href, label }) => {
           const active = isActive(href);
@@ -94,7 +94,7 @@ export default function Navbar() {
         })}
       </div>
 
-      //Desktop right side 
+      {/* Desktop right side */}
       <div className="hidden md:flex items-center gap-2.5">
         {user ? (
           <>
@@ -174,7 +174,7 @@ export default function Navbar() {
         )}
       </div>
 
-      //Mobile hamburger 
+      {/* Mobile hamburger */}
       <button onClick={() => setMenuOpen(v => !v)}
         className="md:hidden p-2 rounded-[8px] transition-colors"
         style={{ color: 'var(--text-muted)' }}
@@ -183,7 +183,7 @@ export default function Navbar() {
         {menuOpen ? <X size={18} /> : <Menu size={18} />}
       </button>
 
-      //Mobile menu 
+      {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 py-3 px-4 z-50 animate-fade-in"
           style={{

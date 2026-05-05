@@ -37,7 +37,7 @@ export default function CandidateDashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  //  Pipeline computation
+  // ── Pipeline computation ────────────────────────────────────────────────────
   const PIPELINE_STAGES = [
     { key: 'pending',     label: 'Applied',      color: 'bg-slate-400',   text: 'text-slate-400'   },
     { key: 'reviewing',   label: 'Reviewing',    color: 'bg-blue-400',    text: 'text-blue-400'    },
@@ -60,7 +60,7 @@ export default function CandidateDashboard() {
 
   const strength = stats?.summary?.profileStrength || 0;
 
-  // Stat cards 
+  // Stat cards — "Jobs Available" replaced with "AI Matches" fed by MatchedJobs
   const statCards = [
     { icon: FileText,    label: 'Applications',  value: stats?.summary?.totalApplications ?? 0, color: 'blue'    },
     { icon: Bookmark,    label: 'Saved Jobs',     value: stats?.summary?.savedJobsCount    ?? 0, color: 'brand'   },
@@ -68,7 +68,7 @@ export default function CandidateDashboard() {
     {
       icon: Zap,
       label: 'AI Matches',
-      value: aiMatchCount,  
+      value: aiMatchCount,   // null while MatchedJobs is still fetching
       color: 'purple',
       isAi: true,
     },
@@ -84,7 +84,7 @@ export default function CandidateDashboard() {
           <p className="text-slate-400 mt-1">Here's your job search overview</p>
         </div>
 
-        //Stats 
+        {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {statCards.map(({ icon: Icon, label, value, color, isAi }) => (
             <div key={label} className="card">
@@ -109,14 +109,14 @@ export default function CandidateDashboard() {
                 </div>
               </div>
 
-              //Show a pulse placeholder until both global stats AND ai count are ready 
+              {/* Show a pulse placeholder until both global stats AND ai count are ready */}
               {(loading || (isAi && aiMatchCount === null)) ? (
                 <div className="h-9 w-16 bg-dark-500 rounded-xl animate-pulse" />
               ) : (
                 <p className="font-display text-3xl font-bold text-white">{value}</p>
               )}
 
-              //Small "AI-powered" label under the AI matches card 
+              {/* Small "AI-powered" label under the AI matches card */}
               {isAi && (
                 <p className="text-[10px] text-purple-400/70 mt-1 flex items-center gap-1">
                   <Zap size={8} className="fill-current" /> AI‑powered
@@ -127,7 +127,7 @@ export default function CandidateDashboard() {
         </div>
 
         <div className="grid lg:grid-cols-5 gap-6">
-          //Profile Strength 
+          {/* Profile Strength */}
           <div className="lg:col-span-2 card">
             <h2 className="font-semibold text-white mb-4">Profile Strength</h2>
             <div className="relative w-32 h-32 mx-auto mb-4">
@@ -149,7 +149,7 @@ export default function CandidateDashboard() {
               </div>
             </div>
 
-            //Checklist 
+            {/* Checklist */}
             <div className="space-y-1.5 text-sm max-h-56 overflow-y-auto pr-1">
               {[
                 { label: 'Profile Photo',     key: 'profile_picture', pts: 10 },
@@ -193,9 +193,9 @@ export default function CandidateDashboard() {
             </Link>
           </div>
 
-          // Quick Actions + Recent Apps 
+          {/* Quick Actions + Recent Apps */}
           <div className="lg:col-span-3 space-y-4">
-            //Quick Actions 
+            {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-3">
               <Link to="/jobs" className="card-hover flex items-center gap-3 group">
                 <div className="w-10 h-10 bg-brand-500/20 rounded-xl flex items-center justify-center">
@@ -217,7 +217,7 @@ export default function CandidateDashboard() {
               </Link>
             </div>
 
-            //Recent Applications 
+            {/* Recent Applications */}
             <div className="card">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-semibold text-white">Recent Applications</h2>
@@ -253,11 +253,11 @@ export default function CandidateDashboard() {
           </div>
         </div>
 
-        //Application Analytics 
+        {/* ── Application Analytics ── */}
         {!loading && total > 0 && (
           <div className="grid lg:grid-cols-3 gap-4">
 
-            //Pipeline funnel 
+            {/* Pipeline funnel */}
             <div className="lg:col-span-2 card">
               <h2 className="font-semibold text-white mb-5">Application Pipeline</h2>
               <div className="space-y-3">
@@ -286,7 +286,7 @@ export default function CandidateDashboard() {
               </p>
             </div>
 
-            //Response rate + success rate 
+            {/* Response rate + success rate */}
             <div className="space-y-4">
               <div className="card flex flex-col items-center justify-center text-center py-6">
                 <div className="w-12 h-12 rounded-full bg-blue-500/15 flex items-center justify-center mb-3">
@@ -310,7 +310,7 @@ export default function CandidateDashboard() {
           </div>
         )}
 
-        //MatchedJobs reports its count back up via onMatchCount 
+        {/* MatchedJobs reports its count back up via onMatchCount */}
         <MatchedJobs onMatchCount={setAiMatchCount} />
       </div>
     </DashboardLayout>

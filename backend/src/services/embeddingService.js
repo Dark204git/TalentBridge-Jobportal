@@ -1,18 +1,43 @@
+/**
+ * embeddingService.js
+ *
+ * Wraps @xenova/transformers to generate 384-dimensional sentence embeddings
+ * using the free, fully local "all-MiniLM-L6-v2" model.
+ *
+ * The model (~23 MB) is downloaded once on first use and cached in
+ * node_modules/.cache/transformers — no API keys, no cost, no network
+ * calls after the first download.
+ *
+ * Usage:
+ *   import { embed, embedBatch, cosineSimilarity } from './embeddingService.js';
+ *   const vec = await embed("Senior React developer with 5 years experience");
+ */
+
 import { pipeline, env } from '@xenova/transformers';
 
+// ── Config ────────────────────────────────────────────────────────────────────
+// Keep model files in the project's .cache folder so Railway / Render
+// persistent disks can cache them between deploys.
 env.cacheDir = './.cache/transformers';
+
+// Disable the remote model check in production to avoid network delays.
+// The model is always available once downloaded.
 env.allowRemoteModels = true;
 env.allowLocalModels  = true;
 
-const MODEL_NAME = 'Xenova/all-MiniLM-L6-v2'; 
+const MODEL_NAME = 'Xenova/all-MiniLM-L6-v2'; // 384 dims, ~23 MB, very fast
 
+// ── Singleton ─────────────────────────────────────────────────────────────────
+// We load the pipeline once and reuse it across all requests.
+// This avoids the ~1-2 second cold-start on every embedding call.
+let _pipe = null;
 let _loading = false;
 let _waiters = [];
 
 async function getPipeline() {
   if (_pipe) return _pipe;
 
-  
+  // If another call is already loading, queue up and wait
   if (_loading) {
     return new Promise((resolve, reject) => _waiters.push({ resolve, reject }));
   }
@@ -22,7 +47,7 @@ async function getPipeline() {
 
   try {
     _pipe = await pipeline('feature-extraction', MODEL_NAME, {
-      quantized: true, 
+      quantized: true, // use int8 quantized weights — 4× smaller, nearly same accuracy
     });
     console.log('✅ Embedding model ready');
     _waiters.forEach(w => w.resolve(_pipe));
@@ -39,8 +64,12 @@ async function getPipeline() {
 // Pre-warm the model on startup so the first real request is fast
 getPipeline().catch(err => console.error('Model pre-warm failed:', err.message));
 
-//Helpers ─)
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
+/**
+ * Mean-pool the token embeddings into a single fixed-size vector,
+ * then L2-normalise it so cosine similarity = dot product.
+ */
 function meanPoolAndNormalize(tensorData, dims) {
   // tensorData shape: [1, seq_len, hidden_size]
   const [, seqLen, hiddenSize] = dims;
@@ -63,10 +92,11 @@ function meanPoolAndNormalize(tensorData, dims) {
   return Array.from(pooled);
 }
 
-//Public API ─
+// ── Public API ─────────────────────────────────────────────────────────────────
 
 /**
- * 
+ * Generate a 384-dimensional embedding vector for a single text string.
+ * Returns a regular JS number[] that can be JSON-serialised and stored in pgvector.
  *
  * @param {string} text
  * @returns {Promise<number[]>}
@@ -78,7 +108,7 @@ export async function embed(text) {
 
   const extractor = await getPipeline();
 
-  // Truncate very long texts — t
+  // Truncate very long texts — the model max is 512 tokens (~2000 chars)
   const truncated = text.slice(0, 2000);
 
   const output = await extractor(truncated, {
@@ -86,12 +116,13 @@ export async function embed(text) {
     normalize: true,
   });
 
-  // output.data is a Float32Arra
+  // output.data is a Float32Array, dims is [batch, seq, hidden]
   return Array.from(output.data);
 }
 
 /**
- * 
+ * Embed multiple texts in one call (slightly more efficient).
+ * Returns an array of vectors in the same order.
  *
  * @param {string[]} texts
  * @returns {Promise<number[][]>}
@@ -102,7 +133,8 @@ export async function embedBatch(texts) {
 }
 
 /**
- * 
+ * Cosine similarity between two vectors (both must be L2-normalised).
+ * Returns a value in [-1, 1] where 1 = identical.
  *
  * @param {number[]} a
  * @param {number[]} b
@@ -116,14 +148,20 @@ export function cosineSimilarity(a, b) {
 }
 
 /**
- * 
+ * Convert a similarity score ([-1,1]) to a human-readable match percentage [0,100].
+ * Scores below 0 are clamped to 0.
  *
  * @param {number} similarity
  * @returns {number}
  */
 export function similarityToPercent(similarity) {
-  
- 
+  // all-MiniLM-L6-v2 cosine similarities for job matching cluster between 0.15–0.70.
+  // Mapping this range to 0–100% gives human-readable scores:
+  //   raw 0.15 → 0%   (completely unrelated)
+  //   raw 0.35 → 33%  (weak match)
+  //   raw 0.50 → 58%  (decent match)
+  //   raw 0.60 → 75%  (strong match)
+  //   raw 0.70 → 100% (excellent match)
   const MIN_SIM = 0.15;
   const MAX_SIM = 0.70;
   const clamped = Math.max(MIN_SIM, Math.min(MAX_SIM, similarity));
@@ -131,15 +169,17 @@ export function similarityToPercent(similarity) {
 }
 
 /**
- * 
+ * Build the text blob we embed for a candidate.
+ * Packs all signal into one string so the model captures the whole profile.
  *
  * @param {object} profile  candidate_profiles row
  * @returns {string}
  */
-
+// Parse a TEXT column value that may be a plain string OR a JSON-serialised array/object.
+// Returns a native JS value (array, object, or string).
 function parseField(value) {
   if (!value) return value;
-  if (typeof value !== 'string') return value;   
+  if (typeof value !== 'string') return value;   // already parsed (JSONB path)
   const t = value.trim();
   if (t.startsWith('[') || t.startsWith('{')) {
     try { return JSON.parse(t); } catch { /* fall through */ }

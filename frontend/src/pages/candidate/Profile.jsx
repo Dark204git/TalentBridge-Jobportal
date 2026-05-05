@@ -14,7 +14,8 @@ const COMMON_SKILLS = [
   'SEO', 'Salesforce',
 ];
 
-
+// Converts education/experience from DB (string or JSONB array) into
+// human-readable text for the textarea. Prevents raw JSON showing to users.
 function formatArrayToText(arr) {
   return arr.map(item => {
     if (typeof item === 'string') return item;
@@ -48,7 +49,8 @@ function formatArrayToText(arr) {
 function formatTextareaField(value) {
   if (!value) return '';
 
-  
+  // Already a plain string — but may be a JSON-serialised array stored in a TEXT column.
+  // Try to parse it; if it's not valid JSON, return as-is.
   if (typeof value === 'string') {
     const trimmed = value.trim();
     if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
@@ -66,7 +68,7 @@ function formatTextareaField(value) {
 
   if (Array.isArray(value)) return formatArrayToText(value);
 
-  // Object 
+  // Object (single entry, not wrapped in array)
   if (typeof value === 'object') return formatArrayToText([value]);
 
   return String(value);
@@ -89,7 +91,7 @@ export default function CandidateProfile() {
     desired_job_title: '', preferred_category: '', preferred_job_type: '', preferred_location: '', desired_salary: '',
     linkedin_url: '', github_url: '', portfolio_url: '', is_open_to_work: true,
     education: '', experience: '',
-
+    // New fields
     phone_number: '',
     date_of_birth: '', gender: '', lives_in: '',
   });
@@ -100,14 +102,15 @@ export default function CandidateProfile() {
   const [saving, setSaving]                       = useState(false);
   const [skillInput, setSkillInput]               = useState('');
   const [resumeStatus, setResumeStatus]           = useState(null);
-
+  // 'idle' | 'parsing' | 'failed' | 'done'
+  // Driven only by explicit actions — never overwritten by raw DB poll data
   const [parseUIState, setParseUIState]           = useState('idle');
   const [uploading, setUploading]                 = useState(false);
   const picInputRef                               = useRef(null);
   const pollRef                                   = useRef(null);
   const pollStart                                 = useRef(null);
 
-  //  Load profile 
+  // ── Load profile ────────────────────────────────────────────────────────────
   useEffect(() => {
     Promise.all([
       profilesAPI.getCandidate(),
@@ -128,10 +131,11 @@ export default function CandidateProfile() {
           github_url:         profile.github_url          || '',
           portfolio_url:      profile.portfolio_url       || '',
           is_open_to_work:    profile.is_open_to_work     ?? true,
-          
+          // If Gemini stored education/experience as JSONB arrays, convert to
+          // readable text for the textarea instead of raw JSON
           education:  formatTextareaField(profile.education),
           experience: formatTextareaField(profile.experience),
-          
+          // New fields — phone stored as-is, no stripping
           phone_number:  profile.phone_number  || '',
           date_of_birth: profile.date_of_birth || '',
           gender:        profile.gender        || '',
@@ -151,7 +155,7 @@ export default function CandidateProfile() {
   return () => stopPolling();
   }, []); // eslint-disable-line
 
-  // Polling 
+  // ── Polling ─────────────────────────────────────────────────────────────────
   const stopPolling = () => {
     if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
   };
@@ -205,7 +209,7 @@ export default function CandidateProfile() {
     }, 3000);
   };
 
-  // Profile picture upload
+  // ── Profile picture upload ───────────────────────────────────────────────────
   const handlePictureChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -244,7 +248,7 @@ export default function CandidateProfile() {
     }
   };
 
-  // Form helpers 
+  // ── Form helpers ─────────────────────────────────────────────────────────────
   const set = (key, val) => setForm(p => ({ ...p, [key]: val }));
 
   const addSkill = (skill) => {
@@ -266,7 +270,7 @@ export default function CandidateProfile() {
     }
   };
 
-  //  Resume drop
+  // ── Resume drop ──────────────────────────────────────────────────────────────
   const onDrop = useCallback(async (acceptedFiles) => {
     const file = acceptedFiles[0];
     if (!file) return;
@@ -317,7 +321,7 @@ export default function CandidateProfile() {
     }
   };
 
-  // Loading skeleton 
+  // ── Loading skeleton ─────────────────────────────────────────────────────────
   if (loading) return (
     <DashboardLayout>
       <div className="max-w-2xl mx-auto space-y-4">
@@ -334,7 +338,7 @@ export default function CandidateProfile() {
           <p className="text-slate-400 mt-1">Keep your profile updated for better matches</p>
         </div>
 
-        //Account Info
+        {/* ── Account Info ── */}
         <div className="card mb-6 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-brand-500/15 flex items-center justify-center flex-shrink-0">
             <User size={20} className="text-brand-400" />
@@ -345,11 +349,11 @@ export default function CandidateProfile() {
           </div>
         </div>
 
-        //Profile Photo 
+        {/* ── Profile Photo ── */}
         <div className="card mb-6">
           <h2 className="font-semibold text-white mb-4">Profile Photo</h2>
           <div className="flex items-center gap-5">
-            //Avatar circle 
+            {/* Avatar circle */}
             <div className="relative flex-shrink-0">
               <div className="w-20 h-20 rounded-full overflow-hidden bg-dark-500 border-2 border-dark-300 flex items-center justify-center">
                 {uploadingPic ? (
@@ -360,7 +364,7 @@ export default function CandidateProfile() {
                   <User size={32} className="text-slate-600" />
                 )}
               </div>
-              //Camera overlay button 
+              {/* Camera overlay button */}
               <button
                 type="button"
                 onClick={() => picInputRef.current?.click()}
@@ -395,7 +399,7 @@ export default function CandidateProfile() {
           </div>
         </div>
 
-        // Open to Wor 
+        {/* ── Open to Work ── */}
         <div className="card mb-6 flex items-center justify-between">
           <div>
             <p className="font-semibold text-white">Open to Work</p>
@@ -409,7 +413,7 @@ export default function CandidateProfile() {
           </button>
         </div>
 
-        // Resume Upload
+        {/* ── Resume Upload ── */}
         <div className="card mb-6">
           <h2 className="font-semibold text-white mb-4">Resume</h2>
           {resumeStatus?.resume_url && (
@@ -464,11 +468,11 @@ export default function CandidateProfile() {
 
         <form onSubmit={handleSave} className="space-y-6">
 
-          //Personal Info 
+          {/* ── Personal Info (NEW FIELDS) ── */}
           <div className="card space-y-4">
             <h2 className="font-semibold text-white border-b border-dark-400 pb-3">Personal Info</h2>
 
-            //Contact Number 
+            {/* Contact Number */}
             <div>
               <label className="label">Contact Number</label>
               <input
@@ -480,7 +484,7 @@ export default function CandidateProfile() {
               />
             </div>
 
-            //Date of Birth 
+            {/* Date of Birth */}
             <div>
               <label className="label">Date of Birth</label>
               <input
@@ -492,7 +496,7 @@ export default function CandidateProfile() {
               />
             </div>
 
-            //Gender 
+            {/* Gender */}
             <div>
               <label className="label">Gender</label>
               <select
@@ -508,7 +512,7 @@ export default function CandidateProfile() {
               </select>
             </div>
 
-            //Lives In 
+            {/* Lives In */}
             <div>
               <label className="label">Lives In</label>
               <input
@@ -522,7 +526,7 @@ export default function CandidateProfile() {
             </div>
           </div>
 
-          // Professional Info 
+          {/* ── Professional Info ── */}
           <div className="card space-y-4">
             <h2 className="font-semibold text-white border-b border-dark-400 pb-3">Professional Info</h2>
             <div>
@@ -589,7 +593,7 @@ export default function CandidateProfile() {
             </div>
           </div>
 
-          // Skills 
+          {/* ── Skills ── */}
           <div className="card space-y-4">
             <h2 className="font-semibold text-white border-b border-dark-400 pb-3">Skills</h2>
             <div className="flex gap-2">
@@ -622,7 +626,7 @@ export default function CandidateProfile() {
             )}
           </div>
 
-          // Background  
+          {/* ── Background ── */}
           <div className="card space-y-4">
             <h2 className="font-semibold text-white border-b border-dark-400 pb-3">Background</h2>
             <div>
@@ -637,7 +641,7 @@ export default function CandidateProfile() {
             </div>
           </div>
 
-          // Links
+          {/* ── Links ── */}
           <div className="card space-y-4">
             <h2 className="font-semibold text-white border-b border-dark-400 pb-3">Links</h2>
             {[
@@ -660,7 +664,7 @@ export default function CandidateProfile() {
           </div>
         </form>
 
-        // Settings Shortcut
+        {/* ── Settings Shortcut ── */}
         <div className="card border border-white/[0.07] space-y-3 mb-8 flex items-center justify-between">
           <div>
             <p className="font-semibold text-white text-sm">Account Settings</p>

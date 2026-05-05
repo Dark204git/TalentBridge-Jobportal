@@ -1,8 +1,10 @@
 import { supabase } from '../config/supabase.js';
 import { v4 as uuidv4 } from 'uuid';
 
-// Create a notification for a user.
-
+/**
+ * Create a notification for a user.
+ * Safe to call fire-and-forget (.catch(console.error)) — never throws.
+ */
 export const createNotification = async ({ user_id, type, title, message, link = null }) => {
   const { error } = await supabase.from('notifications').insert({
     id: uuidv4(),
@@ -17,7 +19,7 @@ export const createNotification = async ({ user_id, type, title, message, link =
   if (error) console.error('createNotification error:', error);
 };
 
-// ─Convenience helpers ──
+// ─── Convenience helpers ───────────────────────────────────────────────────
 
 export const notifyApplicationReceived = (employerId, candidateName, jobTitle) =>
   createNotification({

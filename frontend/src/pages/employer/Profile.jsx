@@ -71,7 +71,7 @@ export default function EmployerProfile() {
           <p className="text-slate-400 mt-1">A complete profile attracts better candidates</p>
         </div>
 
-        //Account Info
+        {/* ── Account Info ── */}
         <div className="card mb-6 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-brand-500/15 flex items-center justify-center flex-shrink-0">
             <User size={20} className="text-brand-400" />
@@ -86,7 +86,7 @@ export default function EmployerProfile() {
           <div className="card space-y-5">
             <h2 className="font-semibold text-white border-b border-dark-400 pb-3">Company Identity</h2>
 
-            //Logo Preview 
+            {/* Logo Preview */}
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-dark-500 border border-dark-300 rounded-2xl flex items-center justify-center text-2xl font-bold text-brand-400 overflow-hidden flex-shrink-0">
                 {form.company_logo ? (
@@ -169,7 +169,7 @@ export default function EmployerProfile() {
           </div>
         </form>
 
-        //Settings Shortcut
+        {/* ── Settings Shortcut ── */}
         <div className="card border border-white/[0.07] space-y-3 mb-8 flex items-center justify-between">
           <div>
             <p className="font-semibold text-white text-sm">Account Settings</p>

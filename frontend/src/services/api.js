@@ -18,7 +18,8 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-
+// Handle 401 — only log out when the token itself is invalid/expired,
+// NOT when a route rejects due to wrong password or bad input
 api.interceptors.response.use(
   (res) => res,
   (err) => {

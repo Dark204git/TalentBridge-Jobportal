@@ -102,7 +102,7 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     applyDarkTheme();
     applyAccent(accent);
-  }, []); 
+  }, []); // eslint-disable-line
 
   return (
     <ThemeContext.Provider value={{ theme: 'dark', accent, setAccent }}>

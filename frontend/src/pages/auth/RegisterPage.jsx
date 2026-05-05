@@ -53,7 +53,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="card p-8">
-          //Role Selector 
+          {/* Role Selector */}
           <div className="grid grid-cols-2 gap-3 mb-6">
             {['candidate', 'employer'].map((role) => (
               <button

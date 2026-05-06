@@ -241,10 +241,17 @@ export const getEmployerJobs = async (req, res) => {
 
     const jobs = data || [];
     const now = new Date().toISOString();
+    const todayDate = now.split('T')[0]; // "YYYY-MM-DD"
 
-    // Auto-close any active jobs whose deadline has passed
+    // Auto-close jobs whose deadline date is strictly BEFORE today.
+    // Must compare date strings, not full ISO timestamps — "2026-05-06" < "2026-05-06T08:30:00Z"
+    // is true in JS string comparison, which would close today's jobs immediately.
     const expiredIds = jobs
-      .filter(j => j.status === 'active' && j.application_deadline && j.application_deadline < now)
+      .filter(j => {
+        if (j.status !== 'active' || !j.application_deadline) return false;
+        const dl = j.application_deadline.split('T')[0];
+        return dl < todayDate; // strictly before today — today expires at midnight via cron
+      })
       .map(j => j.id);
 
     if (expiredIds.length > 0) {

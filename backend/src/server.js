@@ -122,7 +122,7 @@ cron.schedule('0 0 * * *', async () => {
       .update({ status: 'closed' })
       .eq('status', 'active')
       .not('application_deadline', 'is', null)
-      .lt('application_deadline', today)
+      .lte('application_deadline', today)   // FIX: close jobs expiring ON today too
       .select('id, title');
 
     if (error) {

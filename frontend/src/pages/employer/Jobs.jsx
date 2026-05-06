@@ -6,17 +6,14 @@ import { jobsAPI } from '../../services/api';
 import { formatDistanceToNow, format, differenceInCalendarDays } from 'date-fns';
 import toast from 'react-hot-toast';
 
-// Returns the effective deadline date.
-// Date-only strings like "2026-05-06" are parsed as UTC midnight by the browser,
-// which shifts them to 5:30 AM IST — making today's jobs look already expired.
-// Fix: detect date-only strings and parse them in LOCAL time at end-of-day instead.
+// Date-only strings like "2026-05-06" are parsed as UTC midnight by JS,
+// which in IST (UTC+5:30) becomes 5:30 AM — making today's jobs look expired.
+// Fix: detect date-only strings and build the date in LOCAL time at end-of-day.
 function effectiveDeadline(raw) {
   if (!raw) return new Date(0);
-  // Date-only string: "YYYY-MM-DD" (no T, no Z, no offset)
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
-    const [year, month, day] = raw.split('-').map(Number);
-    // Construct in local time at 23:59:59
-    return new Date(year, month - 1, day, 23, 59, 59, 999);
+    const [y, m, d] = raw.split('-').map(Number);
+    return new Date(y, m - 1, d, 23, 59, 59, 999); // local midnight
   }
   return new Date(raw);
 }
@@ -52,15 +49,21 @@ export default function EmployerJobs() {
     try {
       const { data } = await jobsAPI.getMyJobs();
 
-      // Auto-close any active job whose deadline has already passed
+      // Auto-close any active job whose deadline date is strictly BEFORE today.
+      // We compare date strings (YYYY-MM-DD) so today's deadline is NOT closed
+      // until the backend cron runs at midnight.
+      const todayStr = new Date().toISOString().split('T')[0];
       const updated = await Promise.all(
         data.map(async (job) => {
-          if (job.status === 'active' && isDeadlinePast(job.application_deadline)) {
+          const dl = job.application_deadline
+            ? job.application_deadline.split('T')[0]
+            : null;
+          if (job.status === 'active' && dl && dl < todayStr) {
             try {
               await jobsAPI.deleteJob(job.id);
               return { ...job, status: 'closed' };
             } catch {
-              return job; // leave as-is if the call fails
+              return job;
             }
           }
           return job;

@@ -118,9 +118,6 @@ export default function EmployerDashboard() {
                     <span className="text-sm text-slate-300">
                       <span className="text-white font-medium">"{job.title}"</span>{' '}
                       closes {(() => {
-                        // Date-only strings (YYYY-MM-DD) are parsed as UTC midnight,
-                        // which shifts to 5:30 AM in IST — making today look expired.
-                        // Parse date-only strings in local time at end-of-day instead.
                         const raw = job.application_deadline;
                         let d;
                         if (raw && /^\d{4}-\d{2}-\d{2}$/.test(raw)) {

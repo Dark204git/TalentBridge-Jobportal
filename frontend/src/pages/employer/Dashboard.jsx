@@ -118,11 +118,16 @@ export default function EmployerDashboard() {
                     <span className="text-sm text-slate-300">
                       <span className="text-white font-medium">"{job.title}"</span>{' '}
                       closes {(() => {
-                        const d = new Date(job.application_deadline);
-                        // Deadlines stored as midnight (00:00:00) mean "end of that day"
-                        // so push them to 23:59:59 before computing relative time
-                        if (d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0) {
-                          d.setHours(23, 59, 59, 999);
+                        // Date-only strings (YYYY-MM-DD) are parsed as UTC midnight,
+                        // which shifts to 5:30 AM in IST — making today look expired.
+                        // Parse date-only strings in local time at end-of-day instead.
+                        const raw = job.application_deadline;
+                        let d;
+                        if (raw && /^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+                          const [yr, mo, dy] = raw.split('-').map(Number);
+                          d = new Date(yr, mo - 1, dy, 23, 59, 59, 999);
+                        } else {
+                          d = new Date(raw);
                         }
                         const now = new Date();
                         const sameDay = d.toDateString() === now.toDateString();

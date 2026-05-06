@@ -6,13 +6,19 @@ import { jobsAPI } from '../../services/api';
 import { formatDistanceToNow, format, differenceInCalendarDays } from 'date-fns';
 import toast from 'react-hot-toast';
 
-// Returns the effective deadline date (midnight deadlines → end of day)
+// Returns the effective deadline date.
+// Date-only strings like "2026-05-06" are parsed as UTC midnight by the browser,
+// which shifts them to 5:30 AM IST — making today's jobs look already expired.
+// Fix: detect date-only strings and parse them in LOCAL time at end-of-day instead.
 function effectiveDeadline(raw) {
-  const d = new Date(raw);
-  if (d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0) {
-    d.setHours(23, 59, 59, 999);
+  if (!raw) return new Date(0);
+  // Date-only string: "YYYY-MM-DD" (no T, no Z, no offset)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    const [year, month, day] = raw.split('-').map(Number);
+    // Construct in local time at 23:59:59
+    return new Date(year, month - 1, day, 23, 59, 59, 999);
   }
-  return d;
+  return new Date(raw);
 }
 
 // True when deadline is today or within the next 7 days (and not already past)

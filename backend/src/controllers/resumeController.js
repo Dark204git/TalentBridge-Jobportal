@@ -66,26 +66,10 @@ export const getResumeParseStatus = async (req, res) => {
 
     if (!data) return res.json({ resume_parsed: false, resume_parse_failed: false });
 
-    // If already parsed or already marked failed, return DB state immediately
-    if (data.resume_parsed || data.resume_parse_failed) return res.json(data);
-
-    // Still pending — check BullMQ job state for a failure we haven't recorded yet
-    try {
-      const { resumeQueue } = await import('../workers/resumeQueue.js');
-      const jobs = await resumeQueue.getJobs(['failed']);
-      const failedJob = jobs.find(j => j.data?.user_id === req.user.id);
-      if (failedJob) {
-        // Record the failure in DB so future polls return immediately
-        await supabase.from('candidate_profiles')
-          .update({ resume_parse_failed: true })
-          .eq('user_id', req.user.id);
-        return res.json({ ...data, resume_parse_failed: true, parse_error: failedJob.failedReason });
-      }
-    } catch (queueErr) {
-      // Queue unavailable — just return DB state
-      console.warn('Could not check queue state:', queueErr.message);
-    }
-
+    // Return DB state directly — the worker writes resume_parse_failed=true
+    // to the DB when it fails, so we never need to scan Redis on every poll.
+    // Scanning resumeQueue.getJobs(['failed']) on every 3-second frontend poll
+    // was a major source of Redis read traffic.
     res.json(data);
   } catch (err) {
     console.error('getResumeParseStatus error:', err);

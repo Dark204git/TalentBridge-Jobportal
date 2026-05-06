@@ -1051,8 +1051,15 @@ const worker = new Worker(
   },
   {
     connection: workerConnection,
-    concurrency: 2,           // limit parallel jobs — embedding is CPU-heavy
+    concurrency: 2,            // limit parallel jobs — embedding is CPU-heavy
     limiter: { max: 5, duration: 60_000 }, // max 5 per minute
+    // Default stalled-job check is every 5s — hammers Redis when queue is idle.
+    // 30s is plenty: jobs only stall if the worker crashes mid-job.
+    stalledInterval: 30_000,
+    // How long a job can run before being considered stalled (5 min for Gemini + PDF)
+    lockDuration: 300_000,
+    // Only renew the lock every 15s instead of the default 5s
+    lockRenewTime: 15_000,
   }
 );
 

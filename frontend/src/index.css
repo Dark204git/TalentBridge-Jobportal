@@ -84,7 +84,11 @@
 
 /* ── Base ── */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+  overflow: hidden;
+}
 body {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   background-color: var(--ink2);
@@ -92,6 +96,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.25s, color 0.25s;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* ── Scrollbar ── */
@@ -99,6 +105,7 @@ body {
 ::-webkit-scrollbar-track { background: var(--ink); }
 ::-webkit-scrollbar-thumb { background: var(--ink5); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink4); }
+
 
 /* ── Typography ── */
 h1, h2, h3, h4 {

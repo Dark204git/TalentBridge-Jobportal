@@ -44,7 +44,7 @@ const GEMINI_MODELS = [
   'gemini-2.5-flash',   
   'gemini-2.5-flash-lite',  
   'gemini-3-flash',     
-  'gemini-3-flash-lite'  
+  'gemini-3.1-flash-lite'  
  ];
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 

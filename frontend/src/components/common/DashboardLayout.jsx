@@ -227,7 +227,7 @@ export default function DashboardLayout({ children, title }) {
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--ink2)' }}>
 
       {/* ── Desktop Sidebar ── */}
-      <aside className="hidden lg:flex flex-col w-60 flex-shrink-0 h-full overflow-y-hidden"
+      <aside className="hidden lg:flex flex-col w-60 flex-shrink-0 h-full overflow-y-auto"
         style={{
           background: 'var(--sidebar-bg)',
           borderRight: '1px solid var(--sidebar-border)',

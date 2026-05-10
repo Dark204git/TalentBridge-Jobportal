@@ -55,6 +55,5 @@ jobportal/
 ├── backend/          # Express API + workers
 ├── frontend/         # React SPA
 └── docs/
-    ├── schema.sql    # Database schema (run in Supabase)
-    └── TUTORIAL.md   # Full setup tutorial
+    └──  schema.sql    # Database schema (run in Supabase)
 ```

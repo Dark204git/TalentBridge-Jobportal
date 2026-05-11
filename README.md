@@ -1,6 +1,8 @@
 # TalentBridge — AI-Powered Job Portal
 
 A full-stack job portal with AI-powered resume parsing, smart job matching, applicant tracking, email notifications, and real-time analytics.
+"Check out the live project"
+https://talent-bridge-jobportal.vercel.app/
 
 ## Tech Stack
 
